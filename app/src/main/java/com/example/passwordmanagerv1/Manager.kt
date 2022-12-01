@@ -15,6 +15,7 @@ object Manager {
     fun createNewDataFile(passwordInput: String): Boolean {
         Log.i(TAG, "New password set up")
         return true
+        datafile.writeText("{}")
     }
 
     /**

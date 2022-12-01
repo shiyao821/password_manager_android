@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
@@ -28,23 +29,44 @@ class SetupActivity : AppCompatActivity() {
         btnSetup = findViewById(R.id.btnSetup)
 
         btnSetup.setOnClickListener{
-            val passwordInput = ettpAppPasswordSetup.text.toString()
-            val confirmPasswordInput = ettpAppPasswordSetup.text.toString()
-            if (isValidPassword(passwordInput) &&
-                    passwordInput == confirmPasswordInput) {
-                if (Manager.createNewDataFile(passwordInput)) {
-                    Log.i(TAG, "New password set up")
-                    AlertDialog.Builder(this)
-                        .setTitle("A new data file and corresponding master password has been created")
-                        .setPositiveButton("OK"){ _,_ ->
-                            val resultData = Intent()
-                            setResult(Activity.RESULT_OK, resultData)
-                            finish()
-                        }.show()
-                }
+            validatePasswordInputs()
+        }
+
+        ettpAppPasswordSetup.setOnEditorActionListener { v, actionId, event ->
+            return@setOnEditorActionListener when (actionId) {
+                EditorInfo.IME_ACTION_NEXT -> {
+                    ettpAppPasswordSetupConfirmation.requestFocus()
+                    true
+                } else -> false
+            }
+        }
+        ettpAppPasswordSetupConfirmation.setOnEditorActionListener { v, actionId, event ->
+            return@setOnEditorActionListener when (actionId) {
+                EditorInfo.IME_ACTION_DONE -> {
+                    validatePasswordInputs()
+                    true
+                } else -> false
             }
         }
 
+    }
+
+    private fun validatePasswordInputs() {
+        val passwordInput = ettpAppPasswordSetup.text.toString()
+        val confirmPasswordInput = ettpAppPasswordSetup.text.toString()
+        if (isValidPassword(passwordInput) &&
+            passwordInput == confirmPasswordInput) {
+            if (Manager.createNewDataFile(passwordInput)) {
+                Log.i(TAG, "New password set up")
+                AlertDialog.Builder(this)
+                    .setTitle("A new data file and corresponding master password has been created")
+                    .setPositiveButton("OK"){ _,_ ->
+                        val resultData = Intent()
+                        setResult(Activity.RESULT_OK, resultData)
+                        finish()
+                    }.show()
+            }
+        }
     }
 
     private fun isValidPassword(password: String): Boolean {
