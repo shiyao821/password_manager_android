@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Password Manager V1</string>
+    <string name="setup_prompt">There has been no previous data found. Looks like this is your first time using the app. Please set up a master password for security.</string>
+    <string name="master_password_char_limits">Note that only alphanumeric (0-9, a-z, A-Z) and the following special characters () will be accepted</string>
+    <string name="password_enter_prompt">Enter new password</string>
+    <string name="password_confirmation_prompt">Confirm new password</string>
+</resources>

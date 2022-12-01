@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="alphanumeric">qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890</string>
+    <string name="password_char_without_space">qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!&quot;#$%&amp;&apos;()*+,-./:; &lt;=&gt;?@[\]^_`{|}~</string>
+    <string name="password_char_with_space">qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!&quot;#$%&amp;&apos;()*+,-./:; &lt;=&gt;?@[\]^_`{|}~ </string>
+</resources>
