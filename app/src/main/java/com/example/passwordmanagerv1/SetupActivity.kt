@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 
 class SetupActivity : AppCompatActivity() {
@@ -54,18 +55,22 @@ class SetupActivity : AppCompatActivity() {
     private fun validatePasswordInputs() {
         val passwordInput = ettpAppPasswordSetup.text.toString()
         val confirmPasswordInput = ettpAppPasswordSetup.text.toString()
-        if (isValidPassword(passwordInput) &&
-            passwordInput == confirmPasswordInput) {
-            if (Manager.createNewDataFile(passwordInput)) {
-                Log.i(TAG, "New password set up")
-                AlertDialog.Builder(this)
-                    .setTitle("A new data file and corresponding master password has been created")
-                    .setPositiveButton("OK"){ _,_ ->
-                        val resultData = Intent()
-                        setResult(Activity.RESULT_OK, resultData)
-                        finish()
-                    }.show()
-            }
+        if (!isValidPassword(passwordInput)) {
+            Toast.makeText(this, R.string.invalid_password_toast, Toast.LENGTH_SHORT).show()
+        }
+        if (passwordInput != confirmPasswordInput) {
+            Toast.makeText(this, R.string.mismatching_password_toast, Toast.LENGTH_SHORT).show()
+        }
+
+        if (Manager.createNewDataFile(passwordInput)) {
+            Log.i(TAG, "New password set up")
+            AlertDialog.Builder(this)
+                .setTitle(R.string.new_master_password_dialog)
+                .setPositiveButton(R.string.acknowledge){ _,_ ->
+                    val resultData = Intent()
+                    setResult(Activity.RESULT_OK, resultData)
+                    finish()
+            }.show()
         }
     }
 
