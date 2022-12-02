@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 
 class MenuAdapter (
@@ -26,11 +27,12 @@ class MenuAdapter (
     override fun getItemCount() = optionCodesOrder.size
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val cvMenuOption = itemView.findViewById<CardView>(R.id.cvMenuOption)
         private val option = itemView.findViewById<TextView>(R.id.tvOption)
         fun bind(position: Int) {
             option.text = optionTextsMap[optionCodesOrder[position]].toString()
-            option.setOnClickListener {
-                Log.i(TAG, "Option ${option.text} clicked")
+            cvMenuOption.setOnClickListener {
+                Log.i(TAG, "Option '${option.text}' clicked")
                 onOptionClickedListener.onOptionClicked(position)
             }
         }

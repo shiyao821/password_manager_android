@@ -2,6 +2,7 @@ package com.example.passwordmanagerv1
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.passwordmanagerv1.utils.*
@@ -34,6 +35,7 @@ class MainActivity : AppCompatActivity() {
         menuAdapter = MenuAdapter(this, MENU_OPTION_ORDER,
             optionTextsMap, object: MenuAdapter.onOptionClickListener {
             override fun onOptionClicked(position: Int) {
+                Log.i(TAG, "Option code ${MENU_OPTION_ORDER[position]} activated")
                 when (MENU_OPTION_ORDER[position]) {
                     // different new activity for adding and searching
                     OPTION_CODE_ADD_ACCOUNT -> {
