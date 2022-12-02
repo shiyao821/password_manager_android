@@ -8,4 +8,5 @@
     <string name="mismatching_password_toast">Passwords entered do not match.</string>
     <string name="new_master_password_dialog">A new data file and corresponding master password has been created</string>
     <string name="acknowledge">OK</string>
+    <string name="sampleAccountJson">{\"accountName\": \"sample account\", \"username\": \"\", \"email\": \"\", \"password\": \"\", \"phone\": \"\", \"linkedAccount\": \"\", \"misc\": {\"miscKey1\": \"miscVal1\", \"MiscKey2\": \"MiscVal2\"}}</string>
 </resources>

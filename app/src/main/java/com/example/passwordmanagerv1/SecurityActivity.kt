@@ -1,6 +1,5 @@
 package com.example.passwordmanagerv1
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -34,12 +33,14 @@ class SecurityActivity : AppCompatActivity() {
         }
 
         manager = Manager
-        // Likely first time starting app
+        manager.setApplicationContext(this.applicationContext)
         if (!manager.checkDataFile()) {
+            // Likely first time starting app
             // setup app master password
             val intent = Intent(this, SetupActivity::class.java)
             startActivityForResult(intent, SETUP_PASSWORD_CODE)
-
+        } else {
+            val intent = Intent(this, MainActivity::class.java)
         }
     }
 
