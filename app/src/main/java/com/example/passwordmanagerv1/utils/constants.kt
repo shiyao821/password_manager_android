@@ -2,9 +2,25 @@ package com.example.passwordmanagerv1.utils
 
 const val DATAFILE_NAME = "accounts.data"
 
-const val MANAGER = "MANAGER"
-
 // According to https://owasp.org/www-community/password-special-characters
 const val VALID_SPECIAL_CHARS_WITHOUT_SPACE = "!\"#\$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
 const val VALID_SPECIAL_CHARS_WITH_SPACE = " !\"#\$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
 const val ALPHANUMERIC_CHARS = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890"
+
+const val OPTION_CODE_ADD_ACCOUNT:String = "ADD_ACCOUNT"
+const val OPTION_CODE_SEARCH_ACCOUNT_NAME = "SEARCH_ACCOUNT_NAME"
+const val OPTION_CODE_SEARCH_EMAIL = "SEARCH_EMAIL"
+const val OPTION_CODE_SEARCH_USERNAME = "SEARCH_USERNAME"
+const val OPTION_CODE_SEARCH_PHONE = "SEARCH_PHONE"
+const val OPTION_CODE_SEARCH_PASSWORD = "SEARCH_PASSWORD"
+const val OPTION_CODE_SEARCH_LINKED_ACCOUNT = "SEARCH_LINKED_ACCOUNT"
+
+val MENU_OPTION_ORDER = listOf<String>(
+    OPTION_CODE_ADD_ACCOUNT,
+    OPTION_CODE_SEARCH_ACCOUNT_NAME,
+    OPTION_CODE_SEARCH_EMAIL,
+    OPTION_CODE_SEARCH_USERNAME,
+    OPTION_CODE_SEARCH_PHONE,
+    OPTION_CODE_SEARCH_PASSWORD,
+    OPTION_CODE_SEARCH_LINKED_ACCOUNT
+)

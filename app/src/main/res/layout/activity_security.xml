@@ -17,6 +17,7 @@
         android:text="@string/password_enter_prompt"
         android:textSize="16sp"
         android:visibility="visible"
+        android:inputType="textPassword"
         app:layout_constraintBottom_toTopOf="@+id/ettpAppPasswordLogin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"

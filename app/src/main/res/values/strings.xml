@@ -9,4 +9,12 @@
     <string name="new_master_password_dialog">A new data file and corresponding master password has been created</string>
     <string name="acknowledge">OK</string>
     <string name="sampleAccountJson">{\"accountName\": \"sample account\", \"username\": \"\", \"email\": \"\", \"password\": \"\", \"phone\": \"\", \"linkedAccount\": \"\", \"misc\": {\"miscKey1\": \"miscVal1\", \"MiscKey2\": \"MiscVal2\"}}</string>
+
+    <string name="ADD_ACCOUNT">Add new account</string>
+    <string name="SEARCH_ACCOUNT_NAME">Search by account name</string>
+    <string name="SEARCH_USERNAME">Search by username</string>
+    <string name="SEARCH_EMAIL">Search by email</string>
+    <string name="SEARCH_PHONE">"Search by phone number</string>
+    <string name="SEARCH_PASSWORD">Search by password</string>
+    <string name="SEARCH_LINKED_ACCOUNT">Search by linked accounts</string>
 </resources>

@@ -3,8 +3,6 @@ package com.example.passwordmanagerv1
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.WindowManager
-import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
@@ -41,6 +39,7 @@ class SecurityActivity : AppCompatActivity() {
             startActivityForResult(intent, SETUP_PASSWORD_CODE)
         } else {
             val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
         }
     }
 
@@ -51,6 +50,5 @@ class SecurityActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         CommonUIBehaviors.focusViewAndShowKeyboard(ettpAppPassword, this)
-        // this.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
     }
 }
