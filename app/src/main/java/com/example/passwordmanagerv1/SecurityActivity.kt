@@ -15,7 +15,7 @@ class SecurityActivity : AppCompatActivity() {
     private lateinit var manager: Manager
 
     companion object {
-        private const val TAG = "Security Activity"
+        private const val TAG = "Debug SecurityActivity"
         private const val SETUP_PASSWORD_CODE = 1
     }
 

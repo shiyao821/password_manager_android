@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var menuAdapter: MenuAdapter
 
     companion object {
-        const val TAG = "Main Activity"
+        const val TAG = "Debug MainActivity"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

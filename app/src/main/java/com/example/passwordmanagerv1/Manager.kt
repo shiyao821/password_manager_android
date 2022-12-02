@@ -10,7 +10,7 @@ import java.io.File
  */
 object Manager {
 
-    private const val TAG = "Manager Model"
+    private const val TAG = "debug Manager singleton"
     private lateinit var datafile: File
     private lateinit var applicationContext: Context
     private lateinit var applicationFilePath: File
