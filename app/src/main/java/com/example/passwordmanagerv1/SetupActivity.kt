@@ -56,16 +56,16 @@ class SetupActivity : AppCompatActivity() {
         val passwordInput = ettpAppPasswordSetup.text.toString()
         val confirmPasswordInput = ettpAppPasswordSetup.text.toString()
         if (!isValidPassword(passwordInput)) {
-            Toast.makeText(this, R.string.invalid_password_toast, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.toast_invalid_password, Toast.LENGTH_SHORT).show()
         }
         if (passwordInput != confirmPasswordInput) {
-            Toast.makeText(this, R.string.mismatching_password_toast, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.toast_mismatching_password, Toast.LENGTH_SHORT).show()
         }
 
         if (Manager.createNewDataFile(passwordInput)) {
             Log.i(TAG, "New password set up")
             AlertDialog.Builder(this)
-                .setTitle(R.string.new_master_password_dialog)
+                .setTitle(R.string.dialog_new_master_password)
                 .setPositiveButton(R.string.acknowledge){ _,_ ->
                     val resultData = Intent()
                     setResult(Activity.RESULT_OK, resultData)

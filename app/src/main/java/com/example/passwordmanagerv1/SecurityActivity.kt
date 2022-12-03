@@ -3,8 +3,10 @@ package com.example.passwordmanagerv1
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.passwordmanagerv1.utils.CommonUIBehaviors
 
@@ -26,21 +28,49 @@ class SecurityActivity : AppCompatActivity() {
         btnLogin = findViewById(R.id.btnLogin)
         ettpAppPassword = findViewById(R.id.ettpAppPasswordLogin)
 
-        ettpAppPassword.setOnClickListener{
+        btnLogin.setOnClickListener{
             Log.i(TAG, "btnLogin clicked")
         }
 
         manager = Manager
         manager.setApplicationContext(this.applicationContext)
+        btnLogin.setOnClickListener{
+            login(ettpAppPassword.text.toString())
+        }
+        ettpAppPassword.setOnEditorActionListener { v, actionId, event ->
+            return@setOnEditorActionListener when (actionId) {
+                EditorInfo.IME_ACTION_GO -> {
+                    login(ettpAppPassword.text.toString())
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    private fun passwordValidation(): Boolean {
+        return true
+        TODO("Not yet implemented")
+    }
+
+    private fun login(password: String) {
+        Log.i(TAG, "Attempting to log in")
+        if (!passwordValidation()) {
+            Log.i(TAG, "Incorrect password")
+        }
         if (!manager.checkDataFile()) {
             // Likely first time starting app
             // setup app master password
             val intent = Intent(this, SetupActivity::class.java)
             startActivityForResult(intent, SETUP_PASSWORD_CODE)
-        } else {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+            return
         }
+        if (!manager.loadData()) {
+            Toast.makeText(this, R.string.toast_data_load_failure, Toast.LENGTH_LONG).show()
+            return
+        }
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

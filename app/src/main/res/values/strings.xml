@@ -1,14 +1,19 @@
 <resources>
     <string name="app_name">Password Manager V1</string>
-    <string name="setup_prompt">There has been no previous data found. Looks like this is your first time using the app. Please set up a master password for security.</string>
-    <string name="master_password_char_limits">Note that only alphanumeric (0-9, a-z, A-Z) and the following special characters !&quot;#$%&amp;&apos;()*+,-./:; &lt;=&gt;?@[\]^_`{|}~ will be accepted</string>
-    <string name="password_enter_prompt">Enter new password</string>
-    <string name="password_confirmation_prompt">Confirm new password</string>
-    <string name="invalid_password_toast">Password is invalid. Try again.</string>
-    <string name="mismatching_password_toast">Passwords entered do not match.</string>
-    <string name="new_master_password_dialog">A new data file and corresponding master password has been created</string>
+    <string name="sampleAccountJson">{\"accountName\": \"sample account\", \"username\": \"\", \"email\": \"\", \"password\": \"\", \"phone\": \"\", \"linkedAccount\": [], \"misc\": {\"miscKey1\": \"miscVal1\", \"MiscKey2\": \"MiscVal2\"}}</string>
     <string name="acknowledge">OK</string>
-    <string name="sampleAccountJson">{\"accountName\": \"sample account\", \"username\": \"\", \"email\": \"\", \"password\": \"\", \"phone\": \"\", \"linkedAccount\": \"\", \"misc\": {\"miscKey1\": \"miscVal1\", \"MiscKey2\": \"MiscVal2\"}}</string>
+    <string name="cancel">CANCEL</string>
+
+    <string name="prompt_setup">There has been no previous data found. Looks like this is your first time using the app. Please set up a master password for security.</string>
+    <string name="prompt_master_password_char_limits">Note that only alphanumeric (0-9, a-z, A-Z) and the following special characters !&quot;#$%&amp;&apos;()*+,-./:; &lt;=&gt;?@[\]^_`{|}~ will be accepted</string>
+    <string name="prompt_password_enter">Enter new password</string>
+    <string name="prompt_password_confirmation">Confirm new password</string>
+
+    <string name="toast_invalid_password">Password is invalid. Try again.</string>
+    <string name="toast_mismatching_password">Passwords entered do not match.</string>
+    <string name="toast_data_load_failure">Error in loading data file</string>
+
+    <string name="dialog_new_master_password">A new data file and corresponding master password has been created</string>
 
     <string name="ADD_ACCOUNT">Add new account</string>
     <string name="SEARCH_ACCOUNT_NAME">Search by account name</string>

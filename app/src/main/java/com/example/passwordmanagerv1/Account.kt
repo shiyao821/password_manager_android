@@ -1,6 +1,7 @@
 package com.example.passwordmanagerv1
 
 import kotlinx.serialization.Serializable
+import java.io.Serializable as SerializableClass
 
 @Serializable
 data class Account (
@@ -9,6 +10,6 @@ data class Account (
     val email: String,
     val phone: String,
     val password: String,
-    val linkedAccount: String,
+    val linkedAccount: List<String>,
     val misc: Map<String, String>
-)
+ ) : SerializableClass // can optimize to Parcelable
