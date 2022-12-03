@@ -10,6 +10,6 @@ data class Account (
     val email: String,
     val phone: String,
     val password: String,
-    val linkedAccount: List<String>,
+    val linkedAccounts: List<String>,
     val misc: Map<String, String>
  ) : SerializableClass // can optimize to Parcelable

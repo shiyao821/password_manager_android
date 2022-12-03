@@ -2,12 +2,9 @@ package com.example.passwordmanagerv1
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.AbsListView.RecyclerListener
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT
 
 
@@ -39,7 +36,7 @@ class AccountDetailsActivity : AppCompatActivity() {
 
         // linked accounts uses horizontal scrollable linear layout RecyclerView
         val rvLinkedAccounts = findViewById<RecyclerView>(R.id.rvLinkedAccounts)
-        rvLinkedAccounts.adapter = LinkedAccountsFieldAdapter(this, account.linkedAccount)
+        rvLinkedAccounts.adapter = LinkedAccountsFieldAdapter(this, account.linkedAccounts)
         rvLinkedAccounts.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
 
         // misc info uses vertical scrollable linear layout RecyclerView
