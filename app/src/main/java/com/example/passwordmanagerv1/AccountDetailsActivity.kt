@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT
 
+
 class AccountDetailsActivity : AppCompatActivity() {
 
     private lateinit var account: Account

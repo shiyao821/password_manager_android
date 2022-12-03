@@ -15,6 +15,15 @@
 
     <string name="dialog_new_master_password">A new data file and corresponding master password has been created</string>
 
+    <string name="title_account_name">Account Name</string>
+    <string name="title_username">Username</string>
+    <string name="title_email">Email</string>
+    <string name="title_phone">Phone Number</string>
+    <string name="title_password">Password</string>
+    <string name="title_linked_accounts">Linked Accounts</string>
+
+    <string name="field_value_null">-</string>
+
     <string name="ADD_ACCOUNT">Add new account</string>
     <string name="SEARCH_ACCOUNT_NAME">Search by account name</string>
     <string name="SEARCH_USERNAME">Search by username</string>

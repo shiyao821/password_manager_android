@@ -29,9 +29,9 @@
                 android:id="@+id/tvAccountNameTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView"
+                android:text="Account Name"
                 android:textSize="@dimen/account_details_field_title_text_size"
-                tools:text="tvAccountNameTitle" />
+                />
 
             <TextView
                 android:id="@+id/tvAccountNameValue"
@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="TextView"
+                android:text="@string/field_value_null"
                 android:textSize="@dimen/account_details_field_value_text_size"
                 tools:text="tvAccountNameValue" />
         </LinearLayout>
@@ -91,9 +91,9 @@
                 android:id="@+id/tvEmailTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView"
+                android:text="Email"
                 android:textSize="@dimen/account_details_field_title_text_size"
-                tools:text="tvEmailTitle" />
+                />
 
             <TextView
                 android:id="@+id/tvEmailValue"
@@ -101,7 +101,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="TextView"
+                android:text="@string/field_value_null"
                 android:textSize="@dimen/account_details_field_value_text_size"
                 tools:text="tvEmailValue" />
         </LinearLayout>
@@ -152,9 +152,9 @@
                 android:id="@+id/tvUsernameTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView"
+                android:text="@string/title_username"
                 android:textSize="@dimen/account_details_field_title_text_size"
-                tools:text="tvUsernameTitle" />
+                />
 
             <TextView
                 android:id="@+id/tvUsernameValue"
@@ -162,7 +162,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="TextView"
+                android:text="@string/field_value_null"
                 android:textSize="@dimen/account_details_field_value_text_size"
                 tools:text="tvUsernameValue" />
         </LinearLayout>
@@ -215,9 +215,9 @@
                 android:id="@+id/tvPhoneTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView"
+                android:text="Phone Number"
                 android:textSize="@dimen/account_details_field_title_text_size"
-                tools:text="tvPhoneTitle" />
+                />
 
             <TextView
                 android:id="@+id/tvPhoneValue"
@@ -225,7 +225,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="TextView"
+                android:text="@string/field_value_null"
                 android:textSize="@dimen/account_details_field_value_text_size"
                 tools:text="tvPhoneValue" />
         </LinearLayout>
@@ -278,9 +278,9 @@
                 android:id="@+id/tvPasswordTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView"
+                android:text="@string/title_password"
                 android:textSize="@dimen/account_details_field_title_text_size"
-                tools:text="tvPasswordTitle" />
+                />
 
             <TextView
                 android:id="@+id/tvPasswordValue"
@@ -288,7 +288,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="TextView"
+                android:text="@string/field_value_null"
                 android:textSize="@dimen/account_details_field_value_text_size"
                 tools:text="tvPasswordValue" />
         </LinearLayout>
@@ -341,11 +341,12 @@
                 android:id="@+id/tvLinkedAccountsTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView"
+                android:text="@string/title_linked_accounts"
                 android:textSize="@dimen/account_details_field_title_text_size"
-                tools:text="tvLinkedAccountsTitle" />
+                />
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvLinkedAccounts"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:itemCount="2" />
@@ -360,23 +361,10 @@
             android:layout_centerVertical="true"
             android:layout_marginEnd="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/ivLinkedAccountsCopy"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_baseline_edit_24"
             tools:srcCompat="@drawable/ic_baseline_edit_24" />
-
-        <ImageView
-            android:id="@+id/ivLinkedAccountsCopy"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_baseline_content_copy_24"
-            tools:srcCompat="@drawable/ic_baseline_content_copy_24" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -393,6 +381,7 @@
         app:layout_constraintTop_toBottomOf="@+id/llLinkedAccounts" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvMisc"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
