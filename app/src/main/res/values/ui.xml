@@ -4,5 +4,6 @@
     <dimen name="account_details_field_value_text_size">20sp</dimen>
     <dimen name="account_details_misc_field_value_text_size">16sp</dimen>
     <dimen name="account_details_fields_height_gap">16dp</dimen>
-
+    <dimen name="account_details_linked_account_buttons_separation">8dp</dimen>
+    <dimen name="account_details_misc_fields_separation">16dp</dimen>
 </resources>

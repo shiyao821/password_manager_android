@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Password Manager V1</string>
-    <string name="sampleAccountJson">{\"accountName\": \"sample account\", \"username\": \"\", \"email\": \"\", \"password\": \"\", \"phone\": \"\", \"linkedAccount\": [], \"misc\": {\"miscKey1\": \"miscVal1\", \"MiscKey2\": \"MiscVal2\"}}</string>
+    <string name="sampleAccountJson">{\"accountName\": \"sample account\", \"username\": \"user123\", \"email\": \"user@goodmail.com\", \"password\": \"pass123\", \"phone\": \"999000888\", \"linkedAccount\": [\"account1\", \"account2\"], \"misc\": {\"miscKey1\": \"miscVal1\", \"MiscKey2\": \"MiscVal2\"}}</string>
     <string name="acknowledge">OK</string>
     <string name="cancel">CANCEL</string>
 

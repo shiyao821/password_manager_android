@@ -62,11 +62,15 @@ class MainActivity : AppCompatActivity() {
                                     Toast.LENGTH_SHORT).show()
                                 } else {
                                     // create account and pass to account details activity
-                                    val account = Manager.createAccount(initialName)
-                                    val intent = Intent(this@MainActivity,
-                                        AccountDetailsActivity::class.java)
-                                    intent.putExtra(EXTRA_ACCOUNT, account)
-                                    startActivity(intent)
+                                    if (manager.createAccount(initialName)) {
+                                        val intent = Intent(this@MainActivity,
+                                            AccountDetailsActivity::class.java)
+                                        // used for UI testing
+                                        // val account = manager.getAccount("sample account")
+                                        val account = manager.getAccount(initialName)
+                                        intent.putExtra(EXTRA_ACCOUNT, account)
+                                        startActivity(intent)
+                                    }
                                 }
                             }
                             .setNegativeButton(R.string.cancel) {_,_ -> }

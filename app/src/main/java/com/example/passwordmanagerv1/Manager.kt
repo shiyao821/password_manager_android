@@ -73,7 +73,7 @@ object Manager {
         return accountList.any { acc -> acc.accountName == name }
     }
 
-    fun createAccount(initialName: String): Account {
+    fun createAccount(initialName: String): Boolean {
         val newAccount = Account(accountName=initialName,
             "",
             "",
@@ -84,6 +84,6 @@ object Manager {
         )
         accountList.add(newAccount)
         saveData()
-        return newAccount
+        return true
     }
 }
