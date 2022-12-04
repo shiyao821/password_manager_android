@@ -12,6 +12,7 @@
     <string name="toast_invalid_password">Password is invalid. Try again.</string>
     <string name="toast_mismatching_password">Passwords entered do not match.</string>
     <string name="toast_data_load_failure">Error in loading data file</string>
+    <string name="toast_back_press_again_log_out">Press back again to save and log out</string>
 
     <string name="dialog_new_master_password">A new data file and corresponding master password has been created</string>
 

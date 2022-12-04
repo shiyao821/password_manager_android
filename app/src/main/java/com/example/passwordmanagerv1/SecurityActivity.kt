@@ -1,5 +1,6 @@
 package com.example.passwordmanagerv1
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -70,11 +71,16 @@ class SecurityActivity : AppCompatActivity() {
             return
         }
         val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
         startActivity(intent)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == SETUP_PASSWORD_CODE && resultCode != Activity.RESULT_OK || data == null) {
+            Log.w(TAG, "Did not receive data from launched setup activity")
+        }
     }
 
     override fun onResume() {
