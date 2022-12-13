@@ -6,4 +6,7 @@
     <dimen name="account_details_fields_height_gap">16dp</dimen>
     <dimen name="account_details_linked_account_buttons_separation">8dp</dimen>
     <dimen name="account_details_misc_fields_separation">16dp</dimen>
+
+    <dimen name="search_item_title_text_size">20dp</dimen>
+    <dimen name="search_item_vertical_margin">16dp</dimen>
 </resources>

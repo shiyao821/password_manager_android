@@ -47,6 +47,7 @@ class SecurityActivity : AppCompatActivity() {
                 else -> false
             }
         }
+        login("debugging")
     }
 
     private fun passwordValidation(): Boolean {
@@ -66,7 +67,7 @@ class SecurityActivity : AppCompatActivity() {
             startActivityForResult(intent, SETUP_PASSWORD_CODE)
             return
         }
-        if (!manager.loadData()) {
+        if (!manager.loadData(true)) {
             Toast.makeText(this, R.string.toast_data_load_failure, Toast.LENGTH_LONG).show()
             return
         }

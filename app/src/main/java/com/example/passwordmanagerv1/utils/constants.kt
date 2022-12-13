@@ -26,3 +26,4 @@ val MENU_OPTION_ORDER = listOf<String>(
 )
 
 const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT_NAME"
+const val EXTRA_MENU_OPTION = "EXTRA_MENU_OPTION"

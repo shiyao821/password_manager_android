@@ -47,52 +47,55 @@ class MainActivity : AppCompatActivity() {
                     Log.i(TAG, "Option code ${MENU_OPTION_ORDER[position]} activated")
                     when (MENU_OPTION_ORDER[position]) {
                         // different new activity for adding and searching
-                        OPTION_CODE_ADD_ACCOUNT -> {
-                            val newAccountDialogView = LayoutInflater.from(this@MainActivity)
-                                .inflate(R.layout.dialog_new_account, null)
-                            val ettpInitialAccountName =
-                                newAccountDialogView.findViewById<EditText>(R.id.ettpInitialAccountName)
-
-                            val accountNameDialog = AlertDialog.Builder(this@MainActivity)
-                                .setTitle("New Account")
-                                .setMessage("Create a name for the new account")
-                                .setView(newAccountDialogView)
-                                .setPositiveButton(R.string.acknowledge) { _, _ ->
-                                    // check duplicates
-                                    val initialName = ettpInitialAccountName.text.toString()
-                                    if (manager.ifAccountNameExists(initialName)) {
-                                        Toast.makeText(
-                                            this@MainActivity,
-                                            "The account name '$initialName' already exists",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    } else {
-                                        // create account and pass to account details activity
-                                        if (manager.createAccount(initialName)) {
-                                            val intent = Intent(
-                                                this@MainActivity,
-                                                AccountDetailsActivity::class.java
-                                            )
-                                            // used for UI testing
-                                            // val account = manager.getAccount("sample account")
-                                            val account = manager.getAccount(initialName)
-                                            intent.putExtra(EXTRA_ACCOUNT, account)
-                                            startActivity(intent)
-                                        }
-                                    }
-                                }
-                                .setNegativeButton(R.string.cancel) { _, _ -> }
-
-                            accountNameDialog.show()
-                        }
+                        OPTION_CODE_ADD_ACCOUNT -> addAccount()
                         else -> {
-
+                            val intent = Intent(this@MainActivity, SearchByActivity::class.java)
+                            intent.putExtra(EXTRA_MENU_OPTION, MENU_OPTION_ORDER[position])
+                            startActivity(intent)
                         }
                     }
                 }
             })
         rvMenu.adapter = menuAdapter
         rvMenu.layoutManager = LinearLayoutManager(this)
+    }
+
+    private fun addAccount() {
+        val newAccountDialogView = LayoutInflater.from(this@MainActivity)
+            .inflate(R.layout.dialog_new_account, null)
+        val ettpInitialAccountName =
+            newAccountDialogView.findViewById<EditText>(R.id.ettpInitialAccountName)
+
+        AlertDialog.Builder(this@MainActivity)
+            .setTitle("New Account")
+            .setMessage("Create a name for the new account")
+            .setView(newAccountDialogView)
+            .setPositiveButton(R.string.acknowledge) { _, _ ->
+                // check duplicates
+                val initialName = ettpInitialAccountName.text.toString()
+                if (manager.ifAccountNameExists(initialName)) {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "The account name '$initialName' already exists",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    // create account and pass to account details activity
+                    if (manager.createAccount(initialName)) {
+                        val intent = Intent(
+                            this@MainActivity,
+                            AccountDetailsActivity::class.java
+                        )
+                        // used for UI testing
+                        // val account = manager.getAccount("sample account")
+                        val account = manager.getAccount(initialName)
+                        intent.putExtra(EXTRA_ACCOUNT, account)
+                        startActivity(intent)
+                    }
+                }
+            }
+            .setNegativeButton(R.string.cancel) { _, _ -> }
+            .show()
     }
 
     override fun onBackPressed() {

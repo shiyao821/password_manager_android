@@ -37,8 +37,13 @@ object Manager {
         return datafile.exists()
     }
 
-    fun loadData(): Boolean {
+    fun loadData(debug: Boolean = false): Boolean {
         try {
+            if (debug) {
+                datafile.delete()
+                createNewDataFile("debugging")
+            }
+
             val lines = datafile.readLines()
             accountList = mutableListOf()
             for (line in lines) {
@@ -85,5 +90,9 @@ object Manager {
         accountList.add(newAccount)
         saveData()
         return true
+    }
+
+    fun getAllAccountNames(): List<String> {
+        return accountList.map { account -> account.accountName }
     }
 }
