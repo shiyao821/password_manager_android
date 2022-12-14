@@ -3,6 +3,7 @@
     <string name="sampleAccountJson">{\"accountName\": \"sample account\", \"username\": \"user123\", \"email\": \"user@goodmail.com\", \"password\": \"pass123\", \"phone\": \"999000888\", \"linkedAccounts\": [\"account1\", \"account2\"], \"misc\": {\"miscKey1\": \"miscVal1\", \"MiscKey2\": \"MiscVal2\"}}</string>
     <string name="acknowledge">OK</string>
     <string name="cancel">CANCEL</string>
+    <string name="confirm">CONFIRM</string>
     <string name="search_hint">Type here to search</string>
 
     <string name="prompt_setup">There has been no previous data found. Looks like this is your first time using the app. Please set up a master password for security.</string>
@@ -16,6 +17,13 @@
     <string name="toast_back_press_again_log_out">Press back again to save and log out</string>
 
     <string name="dialog_new_master_password">A new data file and corresponding master password has been created</string>
+    <string name="dialog_edit_account_name_title">Edit Account Name</string>
+    <string name="dialog_edit_username_title">Edit Username</string>
+    <string name="dialog_edit_email_title">Edit Email</string>
+    <string name="dialog_edit_phone_title">Edit Phone Number</string>
+    <string name="dialog_edit_password_title">Edit Password</string>
+    <string name="dialog_edit_linked_accounts_title">Edit Linked Accounts</string>
+    <string name="dialog_edit_previous_substring">Previously: </string>
 
     <string name="title_account_name">Account Name</string>
     <string name="title_username">Username</string>
@@ -33,4 +41,8 @@
     <string name="SEARCH_PHONE">"Search by phone number</string>
     <string name="SEARCH_PASSWORD">Search by password</string>
     <string name="SEARCH_LINKED_ACCOUNT">Search by linked accounts</string>
+    <string name="hint_new_value">Enter new value here</string>
+    <string name="setup">Setup Master Password</string>
+    <string name="header_new_value">New value:</string>
+    <string name="header_previous_value">Previously</string>
 </resources>

@@ -7,7 +7,7 @@ import android.widget.SearchView
 import android.widget.SearchView.OnQueryTextListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT
+import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT_NAME
 import com.example.passwordmanagerv1.utils.EXTRA_MENU_OPTION
 
 class SearchByActivity : AppCompatActivity() {
@@ -21,12 +21,14 @@ class SearchByActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_by)
 
-
         searchByCode = intent.getStringExtra(EXTRA_MENU_OPTION)!!
         svSearch = findViewById(R.id.svSearch)
-
-        val results = Manager.getAllAccountNames()
         rvSearchResult = findViewById(R.id.rvSearchResult)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val results = Manager.getAllAccountNames()
         adapter = SearchResultAdapter(
             this,
             results,
@@ -36,13 +38,12 @@ class SearchByActivity : AppCompatActivity() {
                         this@SearchByActivity,
                         AccountDetailsActivity::class.java
                     )
-                    intent.putExtra(EXTRA_ACCOUNT, Manager.getAccount(accountName))
+                    intent.putExtra(EXTRA_ACCOUNT_NAME, accountName)
                     startActivity(intent)
                 }
             }
         )
         rvSearchResult.adapter = adapter
-
         rvSearchResult.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
 
         svSearch.isIconifiedByDefault = false

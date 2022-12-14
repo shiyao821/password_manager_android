@@ -7,7 +7,6 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -62,9 +61,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun addAccount() {
         val newAccountDialogView = LayoutInflater.from(this@MainActivity)
-            .inflate(R.layout.dialog_new_account, null)
+            .inflate(R.layout.dialog_single_line_text_input, null)
         val ettpInitialAccountName =
-            newAccountDialogView.findViewById<EditText>(R.id.ettpInitialAccountName)
+            newAccountDialogView.findViewById<EditText>(R.id.etDialogSingleLineTextInput)
 
         AlertDialog.Builder(this@MainActivity)
             .setTitle("New Account")
@@ -89,7 +88,7 @@ class MainActivity : AppCompatActivity() {
                         // used for UI testing
                         // val account = manager.getAccount("sample account")
                         val account = manager.getAccount(initialName)
-                        intent.putExtra(EXTRA_ACCOUNT, account)
+                        intent.putExtra(EXTRA_ACCOUNT_NAME, account)
                         startActivity(intent)
                     }
                 }

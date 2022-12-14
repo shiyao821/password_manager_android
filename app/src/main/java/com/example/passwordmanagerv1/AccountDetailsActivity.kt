@@ -1,25 +1,47 @@
 package com.example.passwordmanagerv1
 
+import android.content.Intent
+import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.view.View.OnClickListener
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT
+import com.example.passwordmanagerv1.utils.AccountField
+import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT_NAME
+import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT_FIELD
 
 
 class AccountDetailsActivity : AppCompatActivity() {
 
     private lateinit var account: Account
+    private lateinit var res: Resources
+
+    companion object {
+        const val TAG = "debug AccountDetails"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account_details)
+        res = this.resources
 
-        account = intent.getSerializableExtra(EXTRA_ACCOUNT) as Account
+        val accountName = intent.getStringExtra(EXTRA_ACCOUNT_NAME)!!
+        account = Manager.getAccount(accountName)!!
+    }
 
+    override fun onStart() {
+        super.onStart()
         populateValues()
+    }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        populateValues()
     }
 
     private fun populateValues() {
@@ -28,7 +50,7 @@ class AccountDetailsActivity : AppCompatActivity() {
         val tvEmailValue = findViewById<TextView>(R.id.tvEmailValue)
         tvEmailValue.text = account.email
         val tvUserNameValue = findViewById<TextView>(R.id.tvUsernameValue)
-        tvUserNameValue.text = account.email
+        tvUserNameValue.text = account.username
         val tvPhoneValue = findViewById<TextView>(R.id.tvPhoneValue)
         tvPhoneValue.text = account.phone
         val tvPasswordValue = findViewById<TextView>(R.id.tvPasswordValue)
@@ -45,5 +67,37 @@ class AccountDetailsActivity : AppCompatActivity() {
         rvMisc.adapter = MiscFieldsAdapter(this, miscList)
         rvMisc.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
 
+        // add onClickListeners
+        val ivAccountNameEdit = findViewById<ImageView>(R.id.ivAccountNameEdit)
+        val ivEmailEdit = findViewById<ImageView>(R.id.ivEmailEdit)
+        val ivUsernameEdit = findViewById<ImageView>(R.id.ivUsernameEdit)
+        val ivPhoneEdit = findViewById<ImageView>(R.id.ivPhoneEdit)
+        val ivPasswordEdit = findViewById<ImageView>(R.id.ivPasswordEdit)
+        val ivLinkedAccountsEdit = findViewById<ImageView>(R.id.ivLinkedAccountsEdit)
+
+        ivAccountNameEdit.setOnClickListener(EditStringOnClickListener(AccountField.accountName))
+        ivEmailEdit.setOnClickListener(EditStringOnClickListener(AccountField.email))
+        ivUsernameEdit.setOnClickListener(EditStringOnClickListener(AccountField.username))
+        ivPhoneEdit.setOnClickListener(EditStringOnClickListener(AccountField.phone))
+        ivPasswordEdit.setOnClickListener(EditStringOnClickListener(AccountField.password))
+
+        val ivAccountNameCopy = findViewById<ImageView>(R.id.ivAccountNameCopy)
+        val ivEmailCopy = findViewById<ImageView>(R.id.ivEmailCopy)
+        val ivUsernameCopy = findViewById<ImageView>(R.id.ivUsernameCopy)
+        val ivPhoneCopy = findViewById<ImageView>(R.id.ivPhoneCopy)
+        val ivPasswordCopy = findViewById<ImageView>(R.id.ivPasswordCopy)
+
+    }
+
+    inner class EditStringOnClickListener(
+        val accountField: AccountField
+        ): OnClickListener {
+        override fun onClick(p0: View) {
+            Log.i(TAG, "Edit Button for $accountField clicked")
+            val intent = Intent(this@AccountDetailsActivity, EditStringActivity::class.java)
+            intent.putExtra(EXTRA_ACCOUNT_FIELD, accountField)
+            intent.putExtra(EXTRA_ACCOUNT_NAME, account.accountName)
+            startActivity(intent)
+        }
     }
 }

@@ -5,11 +5,11 @@ import java.io.Serializable as SerializableClass
 
 @Serializable
 data class Account (
-    val accountName: String,
-    val username: String,
-    val email: String,
-    val phone: String,
-    val password: String,
-    val linkedAccounts: List<String>,
-    val misc: Map<String, String>
+    var accountName: String,
+    var username: String,
+    var email: String,
+    var phone: String,
+    var password: String,
+    var linkedAccounts: List<String>,
+    var misc: Map<String, String>
  ) : SerializableClass // can optimize to Parcelable

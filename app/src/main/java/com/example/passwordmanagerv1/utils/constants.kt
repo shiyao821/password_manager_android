@@ -25,5 +25,16 @@ val MENU_OPTION_ORDER = listOf<String>(
     OPTION_CODE_SEARCH_LINKED_ACCOUNT
 )
 
-const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT_NAME"
+enum class AccountField {
+    accountName,
+    email,
+    username,
+    phone,
+    password,
+    linkedAccounts,
+    misc
+}
+
+const val EXTRA_ACCOUNT_NAME = "EXTRA_ACCOUNT_NAME"
 const val EXTRA_MENU_OPTION = "EXTRA_MENU_OPTION"
+const val EXTRA_ACCOUNT_FIELD = "EXTRA_ACCOUNT_FIELD"

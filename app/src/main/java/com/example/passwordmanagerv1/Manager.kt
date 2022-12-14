@@ -2,6 +2,7 @@ package com.example.passwordmanagerv1
 
 import android.content.Context
 import android.util.Log
+import com.example.passwordmanagerv1.utils.AccountField
 import com.example.passwordmanagerv1.utils.DATAFILE_NAME
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -61,12 +62,14 @@ object Manager {
             var saveString = ""
             for (account in accountList) {
                 saveString += Json.encodeToString(account) + "\n"
+                Log.i(TAG, saveString)
                 datafile.writeText(saveString)
             }
         } catch (err: Exception) {
             Log.e(TAG, err.message.toString())
             return false
         }
+        Log.i(TAG, "Data saved")
         return true
     }
 
@@ -94,5 +97,39 @@ object Manager {
 
     fun getAllAccountNames(): List<String> {
         return accountList.map { account -> account.accountName }
+    }
+
+    fun getAccountFieldValue(accountName: String, accountField: AccountField): String {
+        val account = getAccount(accountName) ?: return ""
+        return when (accountField) {
+            AccountField.accountName -> account.accountName
+            AccountField.email -> account.email
+            AccountField.username -> account.username
+            AccountField.phone -> account.phone
+            AccountField.password -> account.password
+            else -> {
+                Log.e(TAG, "Getting $accountField not implemented")
+                ""
+            }
+        }
+    }
+
+    fun editStringFieldValue(
+        accountName: String,
+        accountFieldToEdit: AccountField,
+        newValue: String
+    ) : Boolean {
+        val account = getAccount(accountName) ?: return false
+        when (accountFieldToEdit) {
+            AccountField.accountName -> account.accountName = newValue
+            AccountField.email -> account.email = newValue
+            AccountField.username -> account.username = newValue
+            AccountField.phone -> account.phone = newValue
+            AccountField.password -> account.password = newValue
+            else -> {
+                Log.e(TAG, "Editing $accountFieldToEdit not implemented")
+            }
+        }
+        return saveData()
     }
 }
