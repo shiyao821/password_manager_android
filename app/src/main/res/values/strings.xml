@@ -15,6 +15,7 @@
     <string name="toast_mismatching_password">Passwords entered do not match.</string>
     <string name="toast_data_load_failure">Error in loading data file</string>
     <string name="toast_back_press_again_log_out">Press back again to save and log out</string>
+    <string name="toast_copy_suffix">copied to clipboard</string>
 
     <string name="dialog_new_master_password">A new data file and corresponding master password has been created</string>
     <string name="dialog_edit_account_name_title">Edit Account Name</string>
@@ -41,6 +42,7 @@
     <string name="SEARCH_PHONE">"Search by phone number</string>
     <string name="SEARCH_PASSWORD">Search by password</string>
     <string name="SEARCH_LINKED_ACCOUNT">Search by linked accounts</string>
+
     <string name="hint_new_value">Enter new value here</string>
     <string name="setup">Setup Master Password</string>
     <string name="header_new_value">New value:</string>

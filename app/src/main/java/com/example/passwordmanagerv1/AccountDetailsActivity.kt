@@ -1,5 +1,8 @@
 package com.example.passwordmanagerv1
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +15,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.passwordmanagerv1.utils.AccountField
+import com.example.passwordmanagerv1.utils.CommonUIBehaviors
 import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT_NAME
 import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT_FIELD
 
@@ -87,6 +91,21 @@ class AccountDetailsActivity : AppCompatActivity() {
         val ivPhoneCopy = findViewById<ImageView>(R.id.ivPhoneCopy)
         val ivPasswordCopy = findViewById<ImageView>(R.id.ivPasswordCopy)
 
+        ivAccountNameCopy.setOnClickListener {
+            CommonUIBehaviors.copyToClipboard(this, account.accountName,
+                res.getString(R.string.title_account_name)) }
+        ivUsernameCopy.setOnClickListener {
+            CommonUIBehaviors.copyToClipboard(this, account.username,
+                res.getString(R.string.title_username)) }
+        ivEmailCopy.setOnClickListener {
+            CommonUIBehaviors.copyToClipboard(this, account.email,
+                res.getString(R.string.title_email)) }
+        ivPhoneCopy.setOnClickListener {
+            CommonUIBehaviors.copyToClipboard(this, account.phone,
+                res.getString(R.string.title_phone)) }
+        ivPasswordCopy.setOnClickListener {
+            CommonUIBehaviors.copyToClipboard(this, account.password,
+                res.getString(R.string.title_password)) }
     }
 
     inner class EditStringOnClickListener(
