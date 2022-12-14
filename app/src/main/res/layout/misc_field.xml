@@ -6,6 +6,28 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/account_details_misc_fields_separation">
 
+    <TextView
+        android:id="@+id/tvMiscTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textSize="@dimen/account_details_field_title_text_size"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="tvMiscTitle" />
+
+    <TextView
+        android:id="@+id/tvMiscValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="TextView"
+        android:textSize="@dimen/account_details_misc_field_value_text_size"
+        app:layout_constraintEnd_toStartOf="@+id/ivAccountNameEdit2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvMiscTitle"
+        tools:text="tvMiscValue" />
+
     <ImageView
         android:id="@+id/ivAccountNameCopy2"
         android:layout_width="30dp"
@@ -27,23 +49,4 @@
         app:srcCompat="@drawable/ic_baseline_edit_24"
         tools:srcCompat="@drawable/ic_baseline_edit_24" />
 
-    <TextView
-        android:id="@+id/tvMiscValue"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="TextView"
-        android:textSize="@dimen/account_details_misc_field_value_text_size"
-        app:layout_constraintEnd_toStartOf="@+id/ivAccountNameEdit2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvMiscTitle"
-        tools:text="tvMiscValue" />
-
-    <TextView
-        android:id="@+id/tvMiscTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        android:textSize="@dimen/account_details_field_title_text_size"
-        tools:text="tvMiscTitle" />
 </androidx.constraintlayout.widget.ConstraintLayout>
