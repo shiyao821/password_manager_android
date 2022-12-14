@@ -66,7 +66,7 @@ class SetupActivity : AppCompatActivity() {
             Log.i(TAG, "New password set up")
             AlertDialog.Builder(this)
                 .setTitle(R.string.dialog_new_master_password)
-                .setPositiveButton(R.string.acknowledge){ _,_ ->
+                .setPositiveButton(R.string.button_acknowledge){ _, _ ->
                     val resultData = Intent()
                     setResult(Activity.RESULT_OK, resultData)
                     finish()

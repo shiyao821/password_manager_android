@@ -1,10 +1,12 @@
 <resources>
     <string name="app_name">Password Manager V1</string>
     <string name="sampleAccountJson">{\"accountName\": \"sample account\", \"username\": \"user123\", \"email\": \"user@goodmail.com\", \"password\": \"pass123\", \"phone\": \"999000888\", \"linkedAccounts\": [\"account1\", \"account2\"], \"misc\": {\"miscKey1\": \"miscVal1\", \"MiscKey2\": \"MiscVal2\"}}</string>
-    <string name="acknowledge">OK</string>
-    <string name="cancel">CANCEL</string>
-    <string name="confirm">CONFIRM</string>
-    <string name="search_hint">Type here to search</string>
+    <string name="button_acknowledge">OK</string>
+    <string name="button_cancel">CANCEL</string>
+    <string name="button_confirm">CONFIRM</string>
+
+    <string name="hint_search">Type here to search</string>
+    <string name="hint_new_value">Enter new value here</string>
 
     <string name="prompt_setup">There has been no previous data found. Looks like this is your first time using the app. Please set up a master password for security.</string>
     <string name="prompt_master_password_char_limits">Note that only alphanumeric (0-9, a-z, A-Z) and the following special characters !&quot;#$%&amp;&apos;()*+,-./:; &lt;=&gt;?@[\]^_`{|}~ will be accepted</string>
@@ -43,8 +45,8 @@
     <string name="SEARCH_PASSWORD">Search by password</string>
     <string name="SEARCH_LINKED_ACCOUNT">Search by linked accounts</string>
 
-    <string name="hint_new_value">Enter new value here</string>
-    <string name="setup">Setup Master Password</string>
+    <string name="button_setup">Setup Master Password</string>
+
     <string name="header_new_value">New value:</string>
     <string name="header_previous_value">Previously</string>
 </resources>

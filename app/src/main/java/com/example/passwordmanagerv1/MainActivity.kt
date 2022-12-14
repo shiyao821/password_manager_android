@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
             .setTitle("New Account")
             .setMessage("Create a name for the new account")
             .setView(newAccountDialogView)
-            .setPositiveButton(R.string.acknowledge) { _, _ ->
+            .setPositiveButton(R.string.button_acknowledge) { _, _ ->
                 // check duplicates
                 val initialName = ettpInitialAccountName.text.toString()
                 if (manager.ifAccountNameExists(initialName)) {
@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-            .setNegativeButton(R.string.cancel) { _, _ -> }
+            .setNegativeButton(R.string.button_cancel) { _, _ -> }
             .show()
     }
 
