@@ -1,6 +1,7 @@
 package com.example.passwordmanagerv1
 
 import android.content.Context
+import android.hardware.biometrics.BiometricManager.Strings
 import android.util.Log
 import com.example.passwordmanagerv1.utils.AccountField
 import com.example.passwordmanagerv1.utils.DATAFILE_NAME
@@ -28,7 +29,15 @@ object Manager {
     fun createNewDataFile(passwordInput: String): Boolean {
         Log.i(TAG, "New password set up")
         datafile = File(applicationFilePath, DATAFILE_NAME)
-        datafile.writeText(applicationContext.resources.getString(R.string.sampleAccountJson))
+        val textdata = listOf(
+            applicationContext.resources.getString(R.string.sampleAccountJson),
+            applicationContext.resources.getString(R.string.sampleAccountJson2),
+            applicationContext.resources.getString(R.string.sampleAccountJson3),
+            applicationContext.resources.getString(R.string.sampleAccountJson4),
+            applicationContext.resources.getString(R.string.sampleAccountJson5),
+            applicationContext.resources.getString(R.string.sampleAccountJson6),
+            ).joinToString("\n")
+        datafile.writeText(textdata)
         return true
     }
 

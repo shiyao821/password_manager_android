@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">Password Manager V1</string>
     <string name="sampleAccountJson">{\"accountName\": \"sample account\", \"username\": \"user123\", \"email\": \"user@goodmail.com\", \"password\": \"pass123\", \"phone\": \"999000888\", \"linkedAccounts\": [\"account1\", \"account2\"], \"misc\": {\"miscKey1\": \"miscVal1\", \"MiscKey2\": \"MiscVal2\"}}</string>
+    <string name="sampleAccountJson2">{\"accountName\": \"goodmail\", \"username\": \"user123\", \"email\": \"user@goodmail.com\", \"password\": \"pass123\", \"phone\": \"999000888\", \"linkedAccounts\": [], \"misc\": {\"miscKey1\": \"miscVal1\", \"MiscKey2\": \"MiscVal2\"}}</string>
+    <string name="sampleAccountJson3">{\"accountName\": \"happy.net\", \"username\": \"happy\", \"email\": \"user@goodmail.com\", \"password\": \"happy123\", \"phone\": \"999129126\", \"linkedAccounts\": [\"goodmail\"], \"misc\": {}}</string>
+    <string name="sampleAccountJson4">{\"accountName\": \"gaoxiaoxingdong\", \"username\": \"gaoxiaoyingxiong\", \"email\": \"\", \"password\": \"heiyoheiyo\", \"phone\": \"999129126\", \"linkedAccounts\": [\"goodmail\"], \"misc\": {}}</string>
+    <string name="sampleAccountJson5">{\"accountName\": \"indomie\", \"username\": \"sedap\", \"email\": \"\", \"password\": \"delicious\", \"phone\": \"\", \"linkedAccounts\": [\"goodmail 2\"], \"misc\": {}}</string>
+    <string name="sampleAccountJson6">{\"accountName\": \"goodmail 2\", \"username\": \"user1234\", \"email\": \""user2@goodmail.com\", \"password\": \"pass1234\", \"phone\": \"999129126\", \"linkedAccounts\": [], \"misc\": {\"note\": \"extra goodmail account\"}}</string>
     <string name="button_acknowledge">OK</string>
     <string name="button_cancel">CANCEL</string>
     <string name="button_confirm">CONFIRM</string>
