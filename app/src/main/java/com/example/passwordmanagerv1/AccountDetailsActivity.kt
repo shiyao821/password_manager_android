@@ -62,7 +62,16 @@ class AccountDetailsActivity : AppCompatActivity() {
 
         // linked accounts uses horizontal scrollable linear layout RecyclerView
         val rvLinkedAccounts = findViewById<RecyclerView>(R.id.rvLinkedAccounts)
-        rvLinkedAccounts.adapter = LinkedAccountsFieldAdapter(this, account.linkedAccounts)
+        rvLinkedAccounts.adapter = LinkedAccountsFieldAdapter(this,
+            account.linkedAccounts,
+            object: LinkedAccountsFieldAdapter.OnLinkedAccountClickListener {
+                override fun onButtonClick(linkedAccountName: String) {
+                    val intent = Intent(this@AccountDetailsActivity, AccountDetailsActivity::class.java)
+                    intent.putExtra(EXTRA_ACCOUNT_NAME, linkedAccountName)
+                    startActivity(intent)
+                }
+            }
+        )
         rvLinkedAccounts.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
 
         // misc info uses vertical scrollable linear layout RecyclerView
