@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     private var hasBackBeenPressed = false
 
     companion object {
-        const val TAG = "Debug MainActivity"
+        const val TAG = "clg:Main"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

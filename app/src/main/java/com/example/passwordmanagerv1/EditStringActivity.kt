@@ -18,7 +18,7 @@ class EditStringActivity : AppCompatActivity() {
     private lateinit var accountFieldToEdit: AccountField
 
     companion object {
-        const val TAG = "debug EditString"
+        const val TAG = "clg:EditString"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

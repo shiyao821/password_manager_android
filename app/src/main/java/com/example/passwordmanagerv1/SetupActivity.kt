@@ -14,7 +14,7 @@ import androidx.appcompat.app.AlertDialog
 class SetupActivity : AppCompatActivity() {
 
     companion object {
-        private const val TAG = "Debug SetupActivity"
+        private const val TAG = "clg:Setup"
     }
 
     private lateinit var ettpAppPasswordSetup: EditText

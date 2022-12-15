@@ -15,7 +15,7 @@ class LinkedAccountsFieldAdapter (
 ): RecyclerView.Adapter<LinkedAccountsFieldAdapter.ViewHolder>() {
 
     companion object {
-        private const val TAG = "Debug LinkedAccountsFieldAdapter"
+        private const val TAG = "clg:LinkedAccFAdptr"
     }
 
     interface OnLinkedAccountClickListener {

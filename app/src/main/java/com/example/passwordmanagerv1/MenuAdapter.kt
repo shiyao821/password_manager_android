@@ -17,7 +17,7 @@ class MenuAdapter (
 ) : RecyclerView.Adapter<MenuAdapter.ViewHolder>() {
 
     companion object {
-        private val TAG = "Debug MenuAdapter"
+        private val TAG = "clg:MenuAdapter"
     }
 
     interface onOptionClickListener {

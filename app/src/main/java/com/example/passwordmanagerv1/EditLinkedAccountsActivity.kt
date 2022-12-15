@@ -28,7 +28,7 @@ class EditLinkedAccountsActivity : AppCompatActivity() {
     private lateinit var btnDone: Button
 
     companion object {
-        const val TAG = "debug EditLinkedAcc"
+        const val TAG = "clg:EditLinkedAcc"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

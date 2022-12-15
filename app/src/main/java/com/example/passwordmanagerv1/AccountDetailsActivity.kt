@@ -21,7 +21,7 @@ class AccountDetailsActivity : AppCompatActivity() {
     private lateinit var res: Resources
 
     companion object {
-        const val TAG = "debug AccountDetails"
+        const val TAG = "clg:AccDetails"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
