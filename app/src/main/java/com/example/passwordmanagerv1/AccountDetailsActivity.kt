@@ -1,8 +1,5 @@
 package com.example.passwordmanagerv1
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
@@ -14,10 +11,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.passwordmanagerv1.utils.AccountField
-import com.example.passwordmanagerv1.utils.CommonUIBehaviors
-import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT_NAME
-import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT_FIELD
+import com.example.passwordmanagerv1.utils.*
+import java.util.ArrayList
 
 
 class AccountDetailsActivity : AppCompatActivity() {
@@ -61,7 +56,7 @@ class AccountDetailsActivity : AppCompatActivity() {
         tvPasswordValue.text = account.password
 
         // linked accounts uses horizontal scrollable linear layout RecyclerView
-        val rvLinkedAccounts = findViewById<RecyclerView>(R.id.rvLinkedAccounts)
+        val rvLinkedAccounts = findViewById<RecyclerView>(R.id.rvEditLinkedAccounts)
         rvLinkedAccounts.adapter = LinkedAccountsFieldAdapter(this,
             account.linkedAccounts,
             object: LinkedAccountsFieldAdapter.OnLinkedAccountClickListener {
@@ -93,6 +88,11 @@ class AccountDetailsActivity : AppCompatActivity() {
         ivUsernameEdit.setOnClickListener(EditStringOnClickListener(AccountField.username))
         ivPhoneEdit.setOnClickListener(EditStringOnClickListener(AccountField.phone))
         ivPasswordEdit.setOnClickListener(EditStringOnClickListener(AccountField.password))
+        ivLinkedAccountsEdit.setOnClickListener {
+            val intent = Intent(this, EditLinkedAccountsActivity::class.java)
+            intent.putStringArrayListExtra(EXTRA_LINKED_ACCOUNTS_NAMES, account.linkedAccounts as ArrayList<String>)
+            startActivity(intent)
+        }
 
         val ivAccountNameCopy = findViewById<ImageView>(R.id.ivAccountNameCopy)
         val ivEmailCopy = findViewById<ImageView>(R.id.ivEmailCopy)

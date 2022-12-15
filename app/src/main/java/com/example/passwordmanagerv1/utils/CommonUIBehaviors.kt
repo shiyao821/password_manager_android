@@ -1,6 +1,5 @@
 package com.example.passwordmanagerv1.utils
 
-import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -11,11 +10,16 @@ import com.example.passwordmanagerv1.R
 
 class CommonUIBehaviors {
     companion object {
-        fun focusViewAndShowKeyboard(view: View, activity: Activity) {
+        fun focusViewAndShowKeyboard(view: View, context: Context) {
             if (view.requestFocus()) {
-                val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
             }
+        }
+
+        fun hideKeyboard(view: View, context: Context) {
+            val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
 
         fun copyToClipboard(context: Context, textToCopy: String, textName: String) {

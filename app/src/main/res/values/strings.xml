@@ -54,4 +54,7 @@
 
     <string name="header_new_value">New value:</string>
     <string name="header_previous_value">Previously</string>
+    <string name="header_edit_linked_accounts">Edit Linked Accounts</string>
+
+    <string name="button_add_link">Add Link</string>
 </resources>
