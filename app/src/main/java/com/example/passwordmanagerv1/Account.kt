@@ -10,6 +10,6 @@ data class Account (
     var email: String,
     var phone: String,
     var password: String,
-    var linkedAccounts: List<String>,
+    var linkedAccounts: MutableList<String>,
     var misc: Map<String, String>
  ) : SerializableClass // can optimize to Parcelable

@@ -96,7 +96,7 @@ object Manager {
             "",
             "",
             "",
-            listOf(),
+            mutableListOf(),
             mapOf(),
         )
         accountList.add(newAccount)
@@ -140,5 +140,32 @@ object Manager {
             }
         }
         return saveData()
+    }
+
+    fun addToLinkedAccounts(accountNameToEdit: String, requestedAccountName: String) : Boolean {
+        // validation
+        if (accountNameToEdit == requestedAccountName) return false // cannot link to itself
+        getAccount(requestedAccountName) ?: return false
+        val accountToEdit = getAccount(accountNameToEdit)!!
+        if (requestedAccountName in accountToEdit.linkedAccounts) return false
+        // edit
+        accountToEdit.linkedAccounts.add(requestedAccountName)
+        saveData()
+        return true
+    }
+
+    fun getLinkedAccounts(accountInContext: String): List<String> {
+        return getAccount(accountInContext)!!.linkedAccounts
+    }
+
+    fun removeFromLinkedAccounts(accountNameToEdit: String, requestedAccountName: String) : Boolean {
+        // validation
+        getAccount(requestedAccountName) ?: return false
+        val accountToEdit = getAccount(accountNameToEdit)!!
+        if (requestedAccountName !in accountToEdit.linkedAccounts) return false
+        // edit
+        accountToEdit.linkedAccounts.remove(requestedAccountName)
+        saveData()
+        return true
     }
 }

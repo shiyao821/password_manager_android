@@ -15,6 +15,7 @@ class LinkedAccountsAdapter(
     val context: Context,
     val linkedAccounts: List<String>,
     val onLinkedAccountClickListener: OnLinkedAccountClickListener,
+    val onUnlinkAccountClickListener: OnUnlinkAccountClickListener,
 ) : RecyclerView.Adapter<LinkedAccountsAdapter.ViewHolder>() {
 
     companion object {
@@ -25,12 +26,20 @@ class LinkedAccountsAdapter(
         fun onButtonClick(linkedAccountName: String) {}
     }
 
+    interface OnUnlinkAccountClickListener {
+        fun onButtonClick(linkedAccountName: String) {}
+    }
+
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(position: Int) {
             val btnAccountName = itemView.findViewById<Button>(R.id.btnAccountName)
             btnAccountName.text = linkedAccounts[position]
             btnAccountName.setOnClickListener {
                 onLinkedAccountClickListener.onButtonClick(linkedAccounts[position])
+            }
+            val ivUnlink = itemView.findViewById<ImageView>(R.id.ivUnlink)
+            ivUnlink.setOnClickListener {
+                onUnlinkAccountClickListener.onButtonClick(linkedAccounts[position])
             }
         }
     }

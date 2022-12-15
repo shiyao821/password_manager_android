@@ -90,7 +90,7 @@ class AccountDetailsActivity : AppCompatActivity() {
         ivPasswordEdit.setOnClickListener(EditStringOnClickListener(AccountField.password))
         ivLinkedAccountsEdit.setOnClickListener {
             val intent = Intent(this, EditLinkedAccountsActivity::class.java)
-            intent.putStringArrayListExtra(EXTRA_LINKED_ACCOUNTS_NAMES, account.linkedAccounts as ArrayList<String>)
+            intent.putExtra(EXTRA_ACCOUNT_NAME, account.accountName)
             startActivity(intent)
         }
 

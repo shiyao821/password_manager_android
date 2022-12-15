@@ -60,10 +60,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:ems="10"
-            android:hint="@string/hint_new_value"
+            android:hint="@string/hint_account_name"
             android:imeOptions="actionDone"
-            android:inputType="text"
             android:singleLine="true"
+            android:inputType="text"
             android:textSize="@dimen/edit_text_text_size"
             android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
@@ -76,7 +76,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="TextView"
+            android:text="@string/option_add_new_link"
             android:textSize="@dimen/edit_text_text_size"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -96,6 +96,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:visibility="gone"
+        />
+
+    <Button
+        android:id="@+id/btnDone"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/button_done"
+        android:layout_marginHorizontal="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="visible"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

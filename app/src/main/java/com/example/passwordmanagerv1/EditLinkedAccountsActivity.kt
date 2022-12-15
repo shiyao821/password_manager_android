@@ -5,22 +5,27 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.view.inputmethod.EditorInfo
+import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.passwordmanagerv1.utils.CommonUIBehaviors
 import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT_NAME
-import com.example.passwordmanagerv1.utils.EXTRA_LINKED_ACCOUNTS_NAMES
 
 class EditLinkedAccountsActivity : AppCompatActivity() {
 
+    private lateinit var accountInContext: String
+    private lateinit var linkedAccounts: List<String>
+
     private lateinit var rvLinkedAccounts: RecyclerView
     private lateinit var adapter: RecyclerView.Adapter<LinkedAccountsAdapter.ViewHolder>
-    private lateinit var linkedAccounts: List<String>
+    private lateinit var clAddNewLink: ConstraintLayout
+    private lateinit var ivIcon: ImageView
+    private lateinit var etAddLinkedAccount: EditText
+    private lateinit var tvAddNewLink: TextView
+    private lateinit var btnConfirmLink: Button
+    private lateinit var btnDone: Button
 
     companion object {
         const val TAG = "debug EditLinkedAcc"
@@ -30,31 +35,76 @@ class EditLinkedAccountsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_linked_accounts)
 
-        linkedAccounts = intent.getStringArrayListExtra(EXTRA_LINKED_ACCOUNTS_NAMES) as List<String>
+        accountInContext = intent.getStringExtra(EXTRA_ACCOUNT_NAME)!!
+        linkedAccounts = Manager.getLinkedAccounts(accountInContext)
         Log.i(TAG, "Received Linked Accounts $linkedAccounts")
 
-        val clAddNewLink = findViewById<ConstraintLayout>(R.id.clAddNewLink)
-        val ivIcon = findViewById<ImageView>(R.id.ivLinkedAccountAdd)
-        val etAddLinkedAccount = findViewById<EditText>(R.id.etAddLinkedAccount)
-        val tvAddNewLink = findViewById<TextView>(R.id.tvAddNewLink)
-        val btnConfirmLink = findViewById<Button>(R.id.btnAddLink)
+        clAddNewLink = findViewById(R.id.clAddNewLink)
+        ivIcon = findViewById(R.id.ivLinkedAccountAdd)
+        etAddLinkedAccount = findViewById(R.id.etAddLinkedAccount)
+        tvAddNewLink = findViewById(R.id.tvAddNewLink)
+        btnConfirmLink = findViewById(R.id.btnAddLink)
+        btnDone = findViewById(R.id.btnDone)
 
         clAddNewLink.setOnClickListener {
-            Log.i(LinkedAccountsAdapter.TAG, "Add linked accounts bar clicked")
-            if (etAddLinkedAccount.visibility == View.VISIBLE) {
-                ivIcon.setImageResource(R.drawable.ic_baseline_add_circle_24)
-                etAddLinkedAccount.visibility = View.INVISIBLE
-                btnConfirmLink.visibility = View.GONE
-                tvAddNewLink.visibility = View.VISIBLE
-                CommonUIBehaviors.hideKeyboard(etAddLinkedAccount, this)
-            } else {
-                ivIcon.setImageResource(R.drawable.ic_baseline_cancel_24)
-                etAddLinkedAccount.visibility = View.VISIBLE
-                btnConfirmLink.visibility = View.VISIBLE
-                tvAddNewLink.visibility = View.GONE
-                CommonUIBehaviors.focusViewAndShowKeyboard(etAddLinkedAccount, this)
+            addNewLinkClick()
+        }
+
+        etAddLinkedAccount.setOnEditorActionListener { _, actionId, _ ->
+            return@setOnEditorActionListener when (actionId) {
+                EditorInfo.IME_ACTION_DONE -> {
+                    requestNewLink(accountInContext, etAddLinkedAccount.text.toString())
+                    true
+                } else -> false
             }
         }
+
+        btnConfirmLink.setOnClickListener {
+            requestNewLink(accountInContext, etAddLinkedAccount.text.toString())
+        }
+
+        btnDone.setOnClickListener {
+            this.finish()
+        }
+    }
+
+    private fun addNewLinkClick() {
+        Log.i(LinkedAccountsAdapter.TAG, "Add linked accounts bar clicked")
+        if (etAddLinkedAccount.visibility == View.VISIBLE) {
+            ivIcon.setImageResource(R.drawable.ic_baseline_add_circle_24)
+            etAddLinkedAccount.visibility = View.INVISIBLE
+            btnConfirmLink.visibility = View.GONE
+            tvAddNewLink.visibility = View.VISIBLE
+            btnDone.visibility = View.VISIBLE
+            CommonUIBehaviors.hideKeyboard(etAddLinkedAccount, this)
+        } else {
+            ivIcon.setImageResource(R.drawable.ic_baseline_cancel_24)
+            etAddLinkedAccount.visibility = View.VISIBLE
+            btnConfirmLink.visibility = View.VISIBLE
+            tvAddNewLink.visibility = View.GONE
+            btnDone.visibility = View.GONE
+            CommonUIBehaviors.focusViewAndShowKeyboard(etAddLinkedAccount, this)
+        }
+    }
+
+    private fun requestNewLink(currentAccountName: String, requestedAccountName: String) {
+        Log.i(TAG, "New account link requested")
+        // duplication check - decided to do at UI level instead of Managers
+        // 1) to avoid using exceptions
+        // 2) relevant information already brought over to UI level
+        if (requestedAccountName in linkedAccounts) {
+            Toast.makeText(this, resources.getString(R.string.toast_account_already_linked), Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (!Manager.addToLinkedAccounts(currentAccountName, requestedAccountName)) {
+            val toast = resources.getString(R.string.toast_account_not_found)
+            Log.i(TAG, "account $requestedAccountName not found")
+            Toast.makeText(this, toast, Toast.LENGTH_SHORT).show()
+            return
+        }
+        addNewLinkClick()
+        adapter.notifyItemInserted(adapter.itemCount) // refresh RecyclerView
+        Toast.makeText(this, resources.getString(R.string.toast_account_link_success), Toast.LENGTH_SHORT).show()
     }
 
     override fun onStart() {
@@ -67,8 +117,23 @@ class EditLinkedAccountsActivity : AppCompatActivity() {
                 intent.putExtra(EXTRA_ACCOUNT_NAME, linkedAccountName)
                 startActivity(intent)
             }
+        },
+        object: LinkedAccountsAdapter.OnUnlinkAccountClickListener {
+            override fun onButtonClick(linkedAccountName: String) {
+                removeLinkClick(linkedAccountName)
+            }
         })
         rvLinkedAccounts.adapter = adapter
         rvLinkedAccounts.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL,false)
+    }
+
+    private fun removeLinkClick(linkedAccountName: String) {
+        if (!Manager.removeFromLinkedAccounts(accountInContext, linkedAccountName)) {
+            Log.e(TAG, "Error in removing linked account")
+            Toast.makeText(this, resources.getString(R.string.toast_error), Toast.LENGTH_SHORT).show()
+            return
+        }
+        Toast.makeText(this, resources.getString(R.string.toast_account_unlink_success), Toast.LENGTH_SHORT).show()
+        adapter.notifyDataSetChanged()
     }
 }
