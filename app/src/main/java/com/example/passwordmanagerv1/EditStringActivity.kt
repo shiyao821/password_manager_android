@@ -28,6 +28,16 @@ class EditStringActivity : AppCompatActivity() {
         accountName = intent.getStringExtra(EXTRA_ACCOUNT_NAME)!!
         accountFieldTypeToEdit = intent.getSerializableExtra(EXTRA_ACCOUNT_FIELD_TYPE) as AccountFieldType
 
+        title = resources.getString(R.string.activity_label_edit_entry_prefix) + " " +
+                when (accountFieldTypeToEdit) {
+                    AccountFieldType.accountName -> resources.getString(R.string.title_account_name)
+                    AccountFieldType.username -> resources.getString(R.string.title_username)
+                    AccountFieldType.email -> resources.getString(R.string.title_email)
+                    AccountFieldType.phone -> resources.getString(R.string.title_phone)
+                    AccountFieldType.password -> resources.getString(R.string.title_password)
+                    else -> resources.getString(R.string.error)
+                } + " for $accountName"
+
         etNewValue = findViewById(R.id.etNewValue)
         val tvPreviousValue = findViewById<TextView>(R.id.tvPreviousValue)
         val btnSubmit = findViewById<Button>(R.id.btnSubmit)

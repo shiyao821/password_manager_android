@@ -8,6 +8,8 @@ import android.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.passwordmanagerv1.utils.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 class SearchByFieldActivity : AppCompatActivity() {
     private lateinit var accountFieldType: AccountFieldType
@@ -36,6 +38,19 @@ class SearchByFieldActivity : AppCompatActivity() {
                 mapOf()
             }
         }
+
+        title = when (accountFieldType) {
+            AccountFieldType.username -> resources.getString(R.string.SEARCH_USERNAME).capitalize()
+            AccountFieldType.email -> resources.getString(R.string.SEARCH_EMAIL).capitalize()
+            AccountFieldType.phone -> resources.getString(R.string.SEARCH_PHONE).capitalize()
+            AccountFieldType.password -> resources.getString(R.string.SEARCH_PASSWORD).capitalize()
+            AccountFieldType.linkedAccounts -> resources.getString(R.string.SEARCH_LINKED_ACCOUNT).capitalize()
+            else -> {
+                Log.e(TAG, "Error in account field type")
+                resources.getString(R.string.error)
+            }
+        }
+
         svSearch = findViewById(R.id.svSearch)
         rvSearchResult = findViewById(R.id.rvSearchResult)
     }

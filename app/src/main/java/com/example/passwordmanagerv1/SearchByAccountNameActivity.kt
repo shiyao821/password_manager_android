@@ -22,7 +22,12 @@ class SearchByAccountNameActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_by)
 
-        searchResults = intent.getStringArrayListExtra(EXTRA_ACCOUNT_NAMES_LIST) ?: Manager.getAllAccountNames()
+        val listStringExtra = intent.getStringArrayListExtra(EXTRA_ACCOUNT_NAMES_LIST)
+        if (listStringExtra != null) {
+            // temp solution to filtered results not updating after filtered account is edited
+            title = resources.getString(R.string.activity_label_filtered_results)
+        }
+        searchResults = listStringExtra ?: Manager.getAllAccountNames()
         svSearch = findViewById(R.id.svSearch)
         rvSearchResult = findViewById(R.id.rvSearchResult)
     }
