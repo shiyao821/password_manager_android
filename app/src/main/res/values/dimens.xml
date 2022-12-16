@@ -19,4 +19,5 @@
     <dimen name="margin_end_icons">8dp</dimen>
     <dimen name="margin_start_icons">16dp</dimen>
     <dimen name="scrollable_bottom_padding">16dp</dimen>
+    <dimen name="text_size_message">16sp</dimen>
 </resources>

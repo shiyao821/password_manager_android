@@ -13,6 +13,16 @@
         android:theme="@style/Theme.PasswordManagerV1"
         tools:targetApi="31">
         <activity
+            android:name=".ImportExportActivity"
+            android:exported="false"
+            android:label="@string/activity_label_import_export_data"
+            android:parentActivityName=".MainActivity"
+            >
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".SearchByFieldActivity"
             android:exported="false"
             android:label="@string/activity_label_search_by_field">
@@ -32,8 +42,7 @@
         <activity
             android:name=".EditLinkedAccountsActivity"
             android:exported="false"
-            android:label="@string/activity_label_edit_linked_accounts"
-            >
+            android:label="@string/activity_label_edit_linked_accounts">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -50,14 +59,14 @@
         </activity>
         <activity
             android:name=".SearchByAccountNameActivity"
+            android:exported="false"
             android:label="@string/activity_label_search_by_name"
-            android:parentActivityName=".MainActivity"
-            android:exported="false" />
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".AccountDetailsActivity"
+            android:exported="false"
             android:label="@string/activity_label_account_details"
-            android:parentActivityName=".MainActivity"
-            android:exported="false">
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

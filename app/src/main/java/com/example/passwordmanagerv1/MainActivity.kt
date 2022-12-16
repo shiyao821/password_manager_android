@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
             OPTION_CODE_SEARCH_PHONE to this.resources.getString(R.string.SEARCH_PHONE),
             OPTION_CODE_SEARCH_PASSWORD to this.resources.getString(R.string.SEARCH_PASSWORD),
             OPTION_CODE_SEARCH_LINKED_ACCOUNT to this.resources.getString(R.string.SEARCH_LINKED_ACCOUNT),
+            OPTION_CODE_IMPORT_EXPORT_DATA to resources.getString(R.string.IMPORT_EXPORT_DATA)
         )
 
         rvMenu = findViewById(R.id.rvMenu)
@@ -47,14 +48,22 @@ class MainActivity : AppCompatActivity() {
                     when (MENU_OPTION_ORDER[position]) {
                         // different new activity for adding and searching
                         OPTION_CODE_ADD_ACCOUNT -> addAccount()
+                        OPTION_CODE_SEARCH_ACCOUNT_NAME -> {
+                            val intent = Intent(this@MainActivity, SearchByAccountNameActivity::class.java)
+                            startActivity(intent)
+                        }
                         OPTION_CODE_SEARCH_EMAIL -> startSearchByField(AccountFieldType.email)
                         OPTION_CODE_SEARCH_USERNAME -> startSearchByField(AccountFieldType.username)
                         OPTION_CODE_SEARCH_PHONE -> startSearchByField(AccountFieldType.phone)
                         OPTION_CODE_SEARCH_PASSWORD -> startSearchByField(AccountFieldType.password)
                         OPTION_CODE_SEARCH_LINKED_ACCOUNT -> startSearchByField(AccountFieldType.linkedAccounts)
-                        else -> {
-                            val intent = Intent(this@MainActivity, SearchByAccountNameActivity::class.java)
+                        OPTION_CODE_IMPORT_EXPORT_DATA -> {
+                            val intent = Intent(this@MainActivity, ImportExportActivity::class.java)
                             startActivity(intent)
+                        }
+                        else -> {
+                            AlertDialog.Builder(this@MainActivity)
+                                .setTitle("Not Implemented")
                         }
                     }
                 }

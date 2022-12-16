@@ -87,4 +87,10 @@
     <string name="activity_label_login">Login</string>
     <string name="error">Error</string>
     <string name="activity_label_filtered_results">Filtered Results</string>
+    <string name="IMPORT_EXPORT_DATA">Import / export data</string>
+    <string name="message_import_data_warning">Warning: Importing data will cause the loss of all data currently within the app</string>
+    <string name="button_import_data">Import Data</string>
+    <string name="message_export_prompt">Export data to a file saved on your phone as a backup. This file can be imported by the app.</string>
+    <string name="button_export_data">Export Data</string>
+    <string name="activity_label_import_export_data">Import / Export Data</string>
 </resources>
