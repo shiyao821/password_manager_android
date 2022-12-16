@@ -6,16 +6,16 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import com.example.passwordmanagerv1.utils.AccountField
+import com.example.passwordmanagerv1.utils.AccountFieldType
 import com.example.passwordmanagerv1.utils.CommonUIBehaviors
 import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT_NAME
-import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT_FIELD
+import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT_FIELD_TYPE
 
 class EditStringActivity : AppCompatActivity() {
 
     private lateinit var etNewValue: EditText
     private lateinit var accountName: String
-    private lateinit var accountFieldToEdit: AccountField
+    private lateinit var accountFieldTypeToEdit: AccountFieldType
 
     companion object {
         const val TAG = "clg:EditString"
@@ -26,13 +26,13 @@ class EditStringActivity : AppCompatActivity() {
         setContentView(R.layout.activity_edit_string)
 
         accountName = intent.getStringExtra(EXTRA_ACCOUNT_NAME)!!
-        accountFieldToEdit = intent.getSerializableExtra(EXTRA_ACCOUNT_FIELD) as AccountField
+        accountFieldTypeToEdit = intent.getSerializableExtra(EXTRA_ACCOUNT_FIELD_TYPE) as AccountFieldType
 
         etNewValue = findViewById(R.id.etNewValue)
         val tvPreviousValue = findViewById<TextView>(R.id.tvPreviousValue)
         val btnSubmit = findViewById<Button>(R.id.btnSubmit)
 
-        tvPreviousValue.text = Manager.getAccountFieldValue(accountName, accountFieldToEdit)
+        tvPreviousValue.text = Manager.getAccountFieldValue(accountName, accountFieldTypeToEdit)
         btnSubmit.setOnClickListener {
             handleInputConfirmation()
         }
@@ -53,7 +53,7 @@ class EditStringActivity : AppCompatActivity() {
 
     private fun saveNewValue() {
         val newValue = etNewValue.text.toString()
-        Manager.editStringFieldValue(accountName, accountFieldToEdit, newValue)
+        Manager.editStringFieldValue(accountName, accountFieldTypeToEdit, newValue)
     }
 
     override fun onResume() {

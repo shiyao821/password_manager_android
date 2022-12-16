@@ -5,20 +5,31 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/tvSearchItemAccountName"
+    <ImageView
+        android:id="@+id/ivNext2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_alignParentRight="false"
+        android:layout_marginVertical="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_media_play" />
+
+    <TextView
+        android:id="@+id/tvSearchItemAccountName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/search_item_vertical_margin"
         android:layout_marginBottom="@dimen/search_item_vertical_margin"
         android:text="@string/field_value_null"
         android:textSize="@dimen/search_item_title_text_size"
         android:textStyle="bold"
+        android:layout_marginEnd="@dimen/margin_start_icons"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/ivNext2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
         tools:text="tvAccountName" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

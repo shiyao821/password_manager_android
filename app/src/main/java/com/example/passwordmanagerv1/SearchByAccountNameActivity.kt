@@ -7,35 +7,35 @@ import android.widget.SearchView
 import android.widget.SearchView.OnQueryTextListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.passwordmanagerv1.utils.CommonUIBehaviors
 import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT_NAME
-import com.example.passwordmanagerv1.utils.EXTRA_MENU_OPTION
+import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT_NAMES_LIST
 
-class SearchByActivity : AppCompatActivity() {
+class SearchByAccountNameActivity : AppCompatActivity() {
 
-    private lateinit var searchByCode: String
     private lateinit var svSearch: SearchView
     private lateinit var rvSearchResult: RecyclerView
-    private lateinit var adapter: SearchResultAdapter
+    private lateinit var adapter: SearchByAccountNameAdapter
+    private lateinit var searchResults: List<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_by)
 
-        searchByCode = intent.getStringExtra(EXTRA_MENU_OPTION)!!
+        searchResults = intent.getStringArrayListExtra(EXTRA_ACCOUNT_NAMES_LIST) ?: Manager.getAllAccountNames()
         svSearch = findViewById(R.id.svSearch)
         rvSearchResult = findViewById(R.id.rvSearchResult)
     }
 
     override fun onStart() {
         super.onStart()
-        val results = Manager.getAllAccountNames()
-        adapter = SearchResultAdapter(
+        adapter = SearchByAccountNameAdapter(
             this,
-            results,
-            object : SearchResultAdapter.OnItemClickListener {
+            searchResults,
+            object : SearchByAccountNameAdapter.OnItemClickListener {
                 override fun onItemClick(accountName: String) {
                     val intent = Intent(
-                        this@SearchByActivity,
+                        this@SearchByAccountNameActivity,
                         AccountDetailsActivity::class.java
                     )
                     intent.putExtra(EXTRA_ACCOUNT_NAME, accountName)
@@ -60,5 +60,10 @@ class SearchByActivity : AppCompatActivity() {
                 return true
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        CommonUIBehaviors.focusViewAndShowKeyboard(svSearch, this)
     }
 }

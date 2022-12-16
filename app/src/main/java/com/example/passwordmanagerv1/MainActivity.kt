@@ -47,9 +47,13 @@ class MainActivity : AppCompatActivity() {
                     when (MENU_OPTION_ORDER[position]) {
                         // different new activity for adding and searching
                         OPTION_CODE_ADD_ACCOUNT -> addAccount()
+                        OPTION_CODE_SEARCH_EMAIL -> startSearchByField(AccountFieldType.email)
+                        OPTION_CODE_SEARCH_USERNAME -> startSearchByField(AccountFieldType.username)
+                        OPTION_CODE_SEARCH_PHONE -> startSearchByField(AccountFieldType.phone)
+                        OPTION_CODE_SEARCH_PASSWORD -> startSearchByField(AccountFieldType.password)
+                        OPTION_CODE_SEARCH_LINKED_ACCOUNT -> startSearchByField(AccountFieldType.linkedAccounts)
                         else -> {
-                            val intent = Intent(this@MainActivity, SearchByActivity::class.java)
-                            intent.putExtra(EXTRA_MENU_OPTION, MENU_OPTION_ORDER[position])
+                            val intent = Intent(this@MainActivity, SearchByAccountNameActivity::class.java)
                             startActivity(intent)
                         }
                     }
@@ -57,6 +61,12 @@ class MainActivity : AppCompatActivity() {
             })
         rvMenu.adapter = menuAdapter
         rvMenu.layoutManager = LinearLayoutManager(this)
+    }
+
+    private fun startSearchByField(accountFieldType: AccountFieldType) {
+        val intent = Intent(this@MainActivity, SearchByFieldActivity::class.java)
+        intent.putExtra(EXTRA_ACCOUNT_FIELD_TYPE, accountFieldType)
+        startActivity(intent)
     }
 
     private fun addAccount() {

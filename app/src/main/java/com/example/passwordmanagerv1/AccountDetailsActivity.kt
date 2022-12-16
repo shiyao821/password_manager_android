@@ -13,7 +13,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.passwordmanagerv1.utils.*
-import java.util.ArrayList
 
 
 class AccountDetailsActivity : AppCompatActivity() {
@@ -93,11 +92,11 @@ class AccountDetailsActivity : AppCompatActivity() {
         val ivLinkedAccountsEdit = findViewById<ImageView>(R.id.ivLinkedAccountsEdit)
         val clAddNewMiscField = findViewById<ConstraintLayout>(R.id.clAddNewMiscField)
 
-        ivAccountNameEdit.setOnClickListener(EditStringOnClickListener(AccountField.accountName))
-        ivEmailEdit.setOnClickListener(EditStringOnClickListener(AccountField.email))
-        ivUsernameEdit.setOnClickListener(EditStringOnClickListener(AccountField.username))
-        ivPhoneEdit.setOnClickListener(EditStringOnClickListener(AccountField.phone))
-        ivPasswordEdit.setOnClickListener(EditStringOnClickListener(AccountField.password))
+        ivAccountNameEdit.setOnClickListener(EditStringOnClickListener(AccountFieldType.accountName))
+        ivEmailEdit.setOnClickListener(EditStringOnClickListener(AccountFieldType.email))
+        ivUsernameEdit.setOnClickListener(EditStringOnClickListener(AccountFieldType.username))
+        ivPhoneEdit.setOnClickListener(EditStringOnClickListener(AccountFieldType.phone))
+        ivPasswordEdit.setOnClickListener(EditStringOnClickListener(AccountFieldType.password))
         ivLinkedAccountsEdit.setOnClickListener {
             val intent = Intent(this, EditLinkedAccountsActivity::class.java)
             intent.putExtra(EXTRA_ACCOUNT_NAME, account.accountName)
@@ -133,12 +132,12 @@ class AccountDetailsActivity : AppCompatActivity() {
     }
 
     inner class EditStringOnClickListener(
-        val accountField: AccountField,
+        val accountFieldType: AccountFieldType,
         ): OnClickListener {
         override fun onClick(p0: View) {
-            Log.i(TAG, "Edit Button for $accountField clicked")
+            Log.i(TAG, "Edit Button for $accountFieldType clicked")
             val intent = Intent(this@AccountDetailsActivity, EditStringActivity::class.java)
-            intent.putExtra(EXTRA_ACCOUNT_FIELD, accountField)
+            intent.putExtra(EXTRA_ACCOUNT_FIELD_TYPE, accountFieldType)
             intent.putExtra(EXTRA_ACCOUNT_NAME, account.accountName)
             startActivity(intent)
         }

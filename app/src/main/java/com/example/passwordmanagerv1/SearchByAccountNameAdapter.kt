@@ -7,11 +7,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class SearchResultAdapter (
+class SearchByAccountNameAdapter (
     private val context: Context,
     private val results: List<String>,
     private val onItemClickListener: OnItemClickListener
-) : RecyclerView.Adapter<SearchResultAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<SearchByAccountNameAdapter.ViewHolder>() {
 
     private var displayList = results
 

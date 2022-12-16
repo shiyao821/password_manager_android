@@ -2,7 +2,7 @@ package com.example.passwordmanagerv1
 
 import android.content.Context
 import android.util.Log
-import com.example.passwordmanagerv1.utils.AccountField
+import com.example.passwordmanagerv1.utils.AccountFieldType
 import com.example.passwordmanagerv1.utils.DATAFILE_NAME
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -103,19 +103,19 @@ object Manager {
     }
 
     fun getAllAccountNames(): List<String> {
-        return accountList.map { account -> account.accountName }
+        return accountList.map { account -> account.accountName }.sorted()
     }
 
-    fun getAccountFieldValue(accountName: String, accountField: AccountField): String {
+    fun getAccountFieldValue(accountName: String, accountFieldType: AccountFieldType): String {
         val account = getAccount(accountName) ?: return ""
-        return when (accountField) {
-            AccountField.accountName -> account.accountName
-            AccountField.email -> account.email
-            AccountField.username -> account.username
-            AccountField.phone -> account.phone
-            AccountField.password -> account.password
+        return when (accountFieldType) {
+            AccountFieldType.accountName -> account.accountName
+            AccountFieldType.email -> account.email
+            AccountFieldType.username -> account.username
+            AccountFieldType.phone -> account.phone
+            AccountFieldType.password -> account.password
             else -> {
-                Log.e(TAG, "Getting $accountField not implemented")
+                Log.e(TAG, "Getting $accountFieldType not implemented")
                 ""
             }
         }
@@ -123,18 +123,18 @@ object Manager {
 
     fun editStringFieldValue(
         accountName: String,
-        accountFieldToEdit: AccountField,
+        accountFieldTypeToEdit: AccountFieldType,
         newValue: String
     ) : Boolean {
         val account = getAccount(accountName) ?: return false
-        when (accountFieldToEdit) {
-            AccountField.accountName -> account.accountName = newValue
-            AccountField.email -> account.email = newValue
-            AccountField.username -> account.username = newValue
-            AccountField.phone -> account.phone = newValue
-            AccountField.password -> account.password = newValue
+        when (accountFieldTypeToEdit) {
+            AccountFieldType.accountName -> account.accountName = newValue
+            AccountFieldType.email -> account.email = newValue
+            AccountFieldType.username -> account.username = newValue
+            AccountFieldType.phone -> account.phone = newValue
+            AccountFieldType.password -> account.password = newValue
             else -> {
-                Log.e(TAG, "Editing $accountFieldToEdit not implemented")
+                Log.e(TAG, "Editing $accountFieldTypeToEdit not implemented")
             }
         }
         return saveData()
@@ -195,5 +195,44 @@ object Manager {
     fun hasMiscTitle(accountName: String, title: String): Boolean {
         val account = getAccount(accountName)
         return account!!.misc.containsKey(title)
+    }
+
+    fun getAccountNamesFilteredByField(accountFieldType: AccountFieldType, value: String): List<String> {
+        if (accountFieldType == AccountFieldType.misc) {
+            Log.i(TAG, "Filter by Misc field not implemented")
+            return listOf("")
+        }
+        if (accountFieldType == AccountFieldType.linkedAccounts) {
+            return accountList.filter { account -> account.linkedAccounts.contains(value) }
+                .map { account -> account.accountName}
+        }
+        return accountList.filter { account ->
+            when (accountFieldType) {
+                AccountFieldType.username -> account.username
+                AccountFieldType.email -> account.email
+                AccountFieldType.phone -> account.phone
+                AccountFieldType.password -> account.password
+                else -> account.accountName
+            } == value }.map { account -> account.accountName }
+    }
+
+    fun getAllUsernames(): Map<String, Int> {
+        return accountList.groupingBy { it.username }.eachCount()
+    }
+
+    fun getAllEmails(): Map<String, Int> {
+        return accountList.groupingBy { it.email }.eachCount()
+    }
+
+    fun getAllPhoneNumbers(): Map<String, Int> {
+        return accountList.groupingBy { it.phone }.eachCount()
+    }
+
+    fun getAllPasswords(): Map<String, Int> {
+        return accountList.groupingBy { it.password }.eachCount()
+    }
+
+    fun getAllLinkedAccounts(): Map<String, Int> {
+        return accountList.map { it.linkedAccounts }.flatten().groupingBy { it }.eachCount()
     }
 }
