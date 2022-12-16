@@ -14,4 +14,5 @@
     <dimen name="edit_text_text_size">20sp</dimen>
 
     <dimen name="text_size_activity_header">28sp</dimen>
+    <dimen name="height_min_multiline_text">30sp</dimen>
 </resources>

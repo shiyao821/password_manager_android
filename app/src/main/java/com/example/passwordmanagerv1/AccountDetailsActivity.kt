@@ -9,6 +9,7 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.passwordmanagerv1.utils.*
@@ -72,7 +73,15 @@ class AccountDetailsActivity : AppCompatActivity() {
         // misc info uses vertical scrollable linear layout RecyclerView
         val rvMisc = findViewById<RecyclerView>(R.id.rvMisc)
         val miscList = account.misc.entries.map { Pair(it.key, it.value) }
-        rvMisc.adapter = MiscFieldsAdapter(this, miscList)
+        rvMisc.adapter = MiscFieldsAdapter(this, miscList,
+        object: MiscFieldsAdapter.OnEditMiscClickListener {
+            override fun onClick(fieldTitle: String) {
+                val intent = Intent(this@AccountDetailsActivity, EditMiscActivity::class.java)
+                intent.putExtra(EXTRA_ACCOUNT_NAME, account.accountName)
+                intent.putExtra(EXTRA_MISC_FIELD_TITLE, fieldTitle)
+                startActivity(intent)
+            }
+        })
         rvMisc.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
 
         // add onClickListeners
@@ -82,6 +91,7 @@ class AccountDetailsActivity : AppCompatActivity() {
         val ivPhoneEdit = findViewById<ImageView>(R.id.ivPhoneEdit)
         val ivPasswordEdit = findViewById<ImageView>(R.id.ivPasswordEdit)
         val ivLinkedAccountsEdit = findViewById<ImageView>(R.id.ivLinkedAccountsEdit)
+        val clAddNewMiscField = findViewById<ConstraintLayout>(R.id.clAddNewMiscField)
 
         ivAccountNameEdit.setOnClickListener(EditStringOnClickListener(AccountField.accountName))
         ivEmailEdit.setOnClickListener(EditStringOnClickListener(AccountField.email))
@@ -90,6 +100,11 @@ class AccountDetailsActivity : AppCompatActivity() {
         ivPasswordEdit.setOnClickListener(EditStringOnClickListener(AccountField.password))
         ivLinkedAccountsEdit.setOnClickListener {
             val intent = Intent(this, EditLinkedAccountsActivity::class.java)
+            intent.putExtra(EXTRA_ACCOUNT_NAME, account.accountName)
+            startActivity(intent)
+        }
+        clAddNewMiscField.setOnClickListener {
+            val intent = Intent(this, EditMiscActivity::class.java)
             intent.putExtra(EXTRA_ACCOUNT_NAME, account.accountName)
             startActivity(intent)
         }
@@ -118,7 +133,7 @@ class AccountDetailsActivity : AppCompatActivity() {
     }
 
     inner class EditStringOnClickListener(
-        val accountField: AccountField
+        val accountField: AccountField,
         ): OnClickListener {
         override fun onClick(p0: View) {
             Log.i(TAG, "Edit Button for $accountField clicked")

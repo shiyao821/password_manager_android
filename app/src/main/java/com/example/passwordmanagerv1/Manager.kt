@@ -1,7 +1,6 @@
 package com.example.passwordmanagerv1
 
 import android.content.Context
-import android.hardware.biometrics.BiometricManager.Strings
 import android.util.Log
 import com.example.passwordmanagerv1.utils.AccountField
 import com.example.passwordmanagerv1.utils.DATAFILE_NAME
@@ -97,11 +96,10 @@ object Manager {
             "",
             "",
             mutableListOf(),
-            mapOf(),
+            mutableMapOf(),
         )
         accountList.add(newAccount)
-        saveData()
-        return true
+        return saveData()
     }
 
     fun getAllAccountNames(): List<String> {
@@ -150,8 +148,7 @@ object Manager {
         if (requestedAccountName in accountToEdit.linkedAccounts) return false
         // edit
         accountToEdit.linkedAccounts.add(requestedAccountName)
-        saveData()
-        return true
+        return saveData()
     }
 
     fun getLinkedAccounts(accountInContext: String): List<String> {
@@ -165,7 +162,27 @@ object Manager {
         if (requestedAccountName !in accountToEdit.linkedAccounts) return false
         // edit
         accountToEdit.linkedAccounts.remove(requestedAccountName)
-        saveData()
-        return true
+        return saveData()
+    }
+
+    fun getMiscValue(accountName: String, miscTitle: String): String? {
+        val account = getAccount(accountName) ?: return null
+        return account.misc[miscTitle]
+    }
+
+    fun editMiscValue(
+        accountName: String,
+        prevMiscTitle: String,
+        newMiscTitle: String,
+        miscValue: String
+    ) : Boolean {
+        val account = getAccount(accountName) ?: return false
+        if (newMiscTitle == prevMiscTitle) {
+            account.misc[prevMiscTitle] = miscValue
+        } else {
+            account.misc.remove(prevMiscTitle)
+            account.misc[newMiscTitle] = miscValue
+        }
+        return saveData()
     }
 }

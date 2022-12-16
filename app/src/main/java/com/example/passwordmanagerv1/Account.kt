@@ -11,5 +11,5 @@ data class Account (
     var phone: String,
     var password: String,
     var linkedAccounts: MutableList<String>,
-    var misc: Map<String, String>
+    var misc: MutableMap<String, String>
  ) : SerializableClass // can optimize to Parcelable
