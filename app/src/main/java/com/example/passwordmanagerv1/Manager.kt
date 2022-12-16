@@ -70,9 +70,9 @@ object Manager {
             var saveString = ""
             for (account in accountList) {
                 saveString += Json.encodeToString(account) + "\n"
-                Log.i(TAG, saveString)
                 datafile.writeText(saveString)
             }
+            Log.i(TAG, saveString)
         } catch (err: Exception) {
             Log.e(TAG, err.message.toString())
             return false
@@ -190,5 +190,10 @@ object Manager {
         val account = getAccount(accountName) ?: return false
         account.misc.remove(miscTitle)
         return saveData()
+    }
+
+    fun hasMiscTitle(accountName: String, title: String): Boolean {
+        val account = getAccount(accountName)
+        return account!!.misc.containsKey(title)
     }
 }

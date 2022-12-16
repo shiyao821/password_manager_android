@@ -2,6 +2,7 @@ package com.example.passwordmanagerv1
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.inputmethod.EditorInfo
@@ -20,6 +21,10 @@ class EditMiscActivity : AppCompatActivity() {
     private lateinit var etNewTitle: EditText
     private lateinit var etNewValue: EditText
     private lateinit var btnSubmit: Button
+
+    companion object {
+        const val TAG = "clg:EditMisc"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,6 +99,16 @@ class EditMiscActivity : AppCompatActivity() {
                     this@EditMiscActivity.finish()
                 }
                 .setNegativeButton(resources.getString(R.string.button_cancel)) { _,_ -> }
+                .show()
+            return
+        }
+
+        if (newTitle != miscTitle && Manager.hasMiscTitle(accountName, newTitle)) {
+            val message = "To edit $newTitle, go back and select it from the account's overview page"
+            AlertDialog.Builder(this)
+                .setTitle(resources.getString(R.string.alert_title_misc_title_exists))
+                .setMessage(message)
+                .setPositiveButton(resources.getString(R.string.button_acknowledge)) { _,_ -> }
                 .show()
             return
         }
