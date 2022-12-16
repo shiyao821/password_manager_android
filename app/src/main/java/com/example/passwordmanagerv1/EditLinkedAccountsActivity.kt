@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -93,13 +94,23 @@ class EditLinkedAccountsActivity : AppCompatActivity() {
         // 1) to avoid using exceptions
         // 2) relevant information already brought over to UI level
         if (requestedAccountName in linkedAccounts) {
-            Toast.makeText(this, resources.getString(R.string.toast_account_already_linked), Toast.LENGTH_SHORT).show()
+            AlertDialog.Builder(this)
+                .setTitle(resources.getString(R.string.alert_title_account_already_linked))
+                .setPositiveButton(resources.getString(R.string.button_acknowledge)) { _,_ ->
+                    etAddLinkedAccount.requestFocus()
+                }
+                .show()
             return
         }
         if (!Manager.addToLinkedAccounts(currentAccountName, requestedAccountName)) {
-            val toast = resources.getString(R.string.toast_account_not_found)
+            val toast = resources.getString(R.string.alert_title_account_not_found)
             Log.i(TAG, "account $requestedAccountName not found")
-            Toast.makeText(this, toast, Toast.LENGTH_SHORT).show()
+            AlertDialog.Builder(this)
+                .setTitle(toast)
+                .setPositiveButton(resources.getString(R.string.button_acknowledge)) { _,_ ->
+                    etAddLinkedAccount.requestFocus()
+                }
+                .show()
             return
         }
         addNewLinkClick()
@@ -128,12 +139,18 @@ class EditLinkedAccountsActivity : AppCompatActivity() {
     }
 
     private fun removeLinkClick(linkedAccountName: String) {
-        if (!Manager.removeFromLinkedAccounts(accountInContext, linkedAccountName)) {
-            Log.e(TAG, "Error in removing linked account")
-            Toast.makeText(this, resources.getString(R.string.toast_error), Toast.LENGTH_SHORT).show()
-            return
-        }
-        Toast.makeText(this, resources.getString(R.string.toast_account_unlink_success), Toast.LENGTH_SHORT).show()
-        adapter.notifyDataSetChanged()
+        AlertDialog.Builder(this)
+            .setTitle(resources.getString(R.string.alert_title_unlink_account_confirm))
+            .setPositiveButton(resources.getString(R.string.button_delete)) { _,_ ->
+                if (!Manager.removeFromLinkedAccounts(accountInContext, linkedAccountName)) {
+                    Log.e(TAG, "Error in removing linked account")
+                    Toast.makeText(this, resources.getString(R.string.toast_error), Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+                Toast.makeText(this, resources.getString(R.string.toast_account_unlink_success), Toast.LENGTH_SHORT).show()
+                adapter.notifyDataSetChanged()
+            }
+            .setNegativeButton(resources.getString(R.string.button_cancel)) { _,_ -> }
+            .show()
     }
 }
