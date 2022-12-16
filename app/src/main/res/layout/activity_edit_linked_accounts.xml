@@ -49,16 +49,17 @@
             android:id="@+id/ivLinkedAccountAdd"
             android:layout_width="@dimen/drawable_size"
             android:layout_height="@dimen/drawable_size"
+            android:layout_marginEnd="@dimen/margin_end_icons"
+            android:layout_marginStart="@dimen/margin_start_icons"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_baseline_add_circle_24" />
 
         <EditText
             android:id="@+id/etAddLinkedAccount"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:ems="10"
             android:hint="@string/hint_account_name"
             android:imeOptions="actionDone"
@@ -66,8 +67,9 @@
             android:inputType="text"
             android:textSize="@dimen/edit_text_text_size"
             android:visibility="invisible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/ivLinkedAccountAdd"
+            android:layout_marginEnd="@dimen/margin_start_icons"
+            app:layout_constraintEnd_toStartOf="@id/ivLinkedAccountAdd"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
 
@@ -75,13 +77,13 @@
             android:id="@+id/tvAddNewLink"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:text="@string/option_add_new_link"
             android:textSize="@dimen/edit_text_text_size"
             android:visibility="visible"
+            android:layout_marginEnd="@dimen/margin_start_icons"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/ivLinkedAccountAdd"
+            app:layout_constraintEnd_toStartOf="@id/ivLinkedAccountAdd"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

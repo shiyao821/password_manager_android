@@ -395,6 +395,7 @@
             android:id="@+id/ivAddMiscField"
             android:layout_width="@dimen/drawable_size"
             android:layout_height="@dimen/drawable_size"
+            android:layout_marginStart="@dimen/margin_start_icons"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -408,6 +409,7 @@
             android:textSize="@dimen/edit_text_text_size"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ivAddMiscField"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

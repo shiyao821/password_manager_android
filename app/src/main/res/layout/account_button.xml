@@ -9,6 +9,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_marginRight="@dimen/account_details_linked_account_buttons_separation"
+        android:layout_marginRight="@dimen/margin_end_icons"
         android:text="Button" />
 </LinearLayout>
