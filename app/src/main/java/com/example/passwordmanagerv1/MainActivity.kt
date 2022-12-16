@@ -96,9 +96,7 @@ class MainActivity : AppCompatActivity() {
                             AccountDetailsActivity::class.java
                         )
                         // used for UI testing
-                        // val account = manager.getAccount("sample account")
-                        val account = manager.getAccount(initialName)
-                        intent.putExtra(EXTRA_ACCOUNT_NAME, account)
+                        intent.putExtra(EXTRA_ACCOUNT_NAME, initialName)
                         startActivity(intent)
                     }
                 }
