@@ -2,10 +2,12 @@ package com.example.passwordmanagerv1
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import com.example.passwordmanagerv1.utils.CommonUIBehaviors
 import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT_NAME
 import com.example.passwordmanagerv1.utils.EXTRA_MISC_FIELD_TITLE
@@ -47,6 +49,28 @@ class EditMiscActivity : AppCompatActivity() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_edit_misc, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.miDeleteMisc -> {
+                AlertDialog.Builder(this)
+                    .setTitle(resources.getString(R.string.alert_title_misc_delete_confirmation))
+                    .setPositiveButton(resources.getString(R.string.button_delete)) { _,_ ->
+                        Manager.deleteMiscEntry(accountName, miscTitle)
+                        this@EditMiscActivity.finish()
+                    }
+                    .setNegativeButton(resources.getString(R.string.button_cancel)) { _,_ -> }
+                    .show()
+            }
+            else -> {}
+        }
+        return true
+    }
+
     override fun onStart() {
         super.onStart()
         if (miscTitle != "") {
@@ -57,6 +81,23 @@ class EditMiscActivity : AppCompatActivity() {
     }
 
     private fun onSubmit() {
+        // validation
+        val newTitle = etNewTitle.text.toString()
+        val newValue = etNewValue.text.toString()
+
+        if (newTitle == "" || newValue == "") {
+            AlertDialog.Builder(this)
+                .setTitle(resources.getString(R.string.alert_title_misc_title_value_empty))
+                .setMessage(resources.getString(R.string.alert_message_misc_title_value_empty))
+                .setPositiveButton(resources.getString(R.string.button_delete)) { _,_ ->
+                    Manager.deleteMiscEntry(accountName, miscTitle)
+                    this@EditMiscActivity.finish()
+                }
+                .setNegativeButton(resources.getString(R.string.button_cancel)) { _,_ -> }
+                .show()
+            return
+        }
+
         Manager.editMiscValue(accountName, miscTitle,
             etNewTitle.text.toString(),
             etNewValue.text.toString())

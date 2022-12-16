@@ -185,4 +185,10 @@ object Manager {
         }
         return saveData()
     }
+
+    fun deleteMiscEntry(accountName: String, miscTitle: String) : Boolean{
+        val account = getAccount(accountName) ?: return false
+        account.misc.remove(miscTitle)
+        return saveData()
+    }
 }
