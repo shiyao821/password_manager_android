@@ -44,4 +44,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
     implementation 'com.google.code.gson:gson:2.10'
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
+    implementation 'com.macasaet.fernet:fernet-java8:1.4.2'
+
 }

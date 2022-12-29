@@ -1,6 +1,12 @@
 package com.example.passwordmanagerv1.utils
 
-const val DATAFILE_NAME = "accounts.data"
+const val DATAFILE_NAME = "accounts"
+const val DATAFILE_EXTENSION = ".data"
+const val DATAFILE_NAME_AND_EXTENSION = DATAFILE_NAME + DATAFILE_EXTENSION
+const val DATAFILE_MIMETYPE_BINARY = "application/octet-stream"
+const val DATAFILE_MIMETYPE_PLAIN = "text/plain"
+
+const val DEBUG_PASSWORD = "debug"
 
 // According to https://owasp.org/www-community/password-special-characters
 const val VALID_SPECIAL_CHARS_WITHOUT_SPACE = "!\"#\$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
@@ -41,4 +47,12 @@ const val EXTRA_ACCOUNT_NAME = "EXTRA_ACCOUNT_NAME"
 const val EXTRA_ACCOUNT_NAMES_LIST = "EXTRA_ACCOUNT_NAMES_LIST"
 const val EXTRA_ACCOUNT_FIELD_TYPE = "EXTRA_ACCOUNT_FIELD"
 const val EXTRA_MISC_FIELD_TITLE = "EXTRA_MISC_FIELD_TITLE"
+const val EXTRA_IMPORT_DATA_URI = "EXTRA_IS_IMPORTING_DATA"
+
 const val LABEL_COPY = "LABEL_COPY"
+
+const val KEY_ALGORITHM = "PBKDF2WithHmacSHA256"
+const val VALIDATOR_TTL_HOURS : Long = 1
+const val KEY_SALT = "69420"
+const val DERIVED_KEY_LENGTH = 256
+const val KEY_ITERATIONS = 69420

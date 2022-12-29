@@ -15,8 +15,8 @@
 
     <string name="prompt_setup">There has been no previous data found. Looks like this is your first time using the app. Please set up a master password for security.</string>
     <string name="prompt_master_password_char_limits">Note that only alphanumeric (0-9, a-z, A-Z) and the following special characters !&quot;#$%&amp;&apos;()*+,-./:; &lt;=&gt;?@[\]^_`{|}~ will be accepted</string>
-    <string name="prompt_password_enter">Enter new password</string>
-    <string name="prompt_password_confirmation">Confirm new password</string>
+    <string name="prompt_new_password_enter">Enter new password</string>
+    <string name="prompt_new_password_confirmation">Confirm new password</string>
 
     <string name="toast_invalid_password">Password is invalid. Try again.</string>
     <string name="toast_mismatching_password">Passwords entered do not match.</string>
@@ -93,4 +93,13 @@
     <string name="message_export_prompt">Export data to a file saved on your phone as a backup. This file can be imported by the app.</string>
     <string name="button_export_data">Export Data</string>
     <string name="activity_label_import_export_data">Import / Export Data</string>
+    <string name="alert_message_external_storage_permissions_needed">The app requires external storage permissions in order to export and import of data files</string>
+    <string name="alert_title_permission_denied">Permission(s) Denied</string>
+    <string name="toast_import_data_success">Data successfully imported</string>
+    <string name="toast_import_data_failure">Data import failed</string>
+    <string name="toast_export_data_success">Data exported successfully</string>
+    <string name="toast_export_data_failure">Data export failed</string>
+    <string name="prompt_password_enter">Enter Master Password</string>
+    <string name="prompt_import_data_password_enter">Enter the Master Password for the imported data</string>
+    <string name="hint_input">Enter here</string>
 </resources>

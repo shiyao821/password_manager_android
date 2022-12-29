@@ -1,13 +1,25 @@
 package com.example.passwordmanagerv1
 
 import android.content.Context
+import android.os.Build
 import android.util.Log
-import com.example.passwordmanagerv1.utils.AccountFieldType
-import com.example.passwordmanagerv1.utils.DATAFILE_NAME
+import androidx.annotation.RequiresApi
+import com.example.passwordmanagerv1.utils.*
+import com.macasaet.fernet.Key
+import com.macasaet.fernet.StringValidator
+import com.macasaet.fernet.Token
+import com.macasaet.fernet.TokenValidationException
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
+import java.io.InputStream
+import java.io.OutputStream
+import java.time.Duration
+import java.time.temporal.TemporalAmount
+import java.util.Base64.getUrlEncoder
+import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.PBEKeySpec
 
 /**
  * Singleton that every activity class uses to manipulate data
@@ -18,6 +30,7 @@ object Manager {
     private lateinit var datafile: File
     private lateinit var applicationContext: Context
     private lateinit var applicationFilePath: File
+    private lateinit var masterPassword: String
     private lateinit var accountList: MutableList<Account>
 
     fun setApplicationContext(context: Context) {
@@ -27,7 +40,7 @@ object Manager {
 
     fun createNewDataFile(passwordInput: String): Boolean {
         Log.i(TAG, "New password set up")
-        datafile = File(applicationFilePath, DATAFILE_NAME)
+        datafile = File(applicationFilePath, DATAFILE_NAME_AND_EXTENSION)
         val textdata = listOf(
             applicationContext.resources.getString(R.string.sampleAccountJson),
             applicationContext.resources.getString(R.string.sampleAccountJson2),
@@ -41,28 +54,66 @@ object Manager {
     }
 
     fun checkDataFile(): Boolean {
-        datafile = File(applicationFilePath, DATAFILE_NAME)
+        datafile = File(applicationFilePath, DATAFILE_NAME_AND_EXTENSION)
         Log.i(TAG, "datafile exists: ${datafile.isFile}")
         return datafile.exists()
     }
 
-    fun loadData(debug: Boolean = false): Boolean {
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun loadData(importData: InputStream? = null, inputPassword: String, debug: Boolean = false): Boolean {
         try {
-            if (debug) {
+            if (debug && importData == null) {
                 datafile.delete()
-                createNewDataFile("debugging")
+                createNewDataFile(inputPassword)
             }
+            val lines: List<String> = if (importData != null) {
+                val dataAsString = importData.readBytes().decodeToString()
+                importData.close()
+                val decodedString = decryptData(dataAsString, inputPassword)
+                decodedString.split("\n")
+            } else {
+                datafile.readLines()
+            }
+            masterPassword = inputPassword // inputPassword is correct at this stage
 
-            val lines = datafile.readLines()
             accountList = mutableListOf()
+            Log.i(TAG, "num lines ${lines.size}")
             for (line in lines) {
-                accountList.add(Json.decodeFromString(line))
+                if (line.isNotEmpty()) {
+                    accountList.add(Json.decodeFromString(line))
+                }
             }
+        } catch (_: TokenValidationException) {
+            Log.i(TAG, "Invalid Password")
         } catch (err: Exception) {
-            Log.e(TAG, err.message.toString())
+            Log.e(TAG, err.toString())
             return false
         }
         return true
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun decryptData(encryptedData: String, inputPassword: String): String {
+        val token = Token.fromString(encryptedData)
+        val encodedKey = deriveKey(inputPassword)
+        val fernetKey = Key(encodedKey)
+        val validator = object : StringValidator {
+            override fun getTimeToLive(): TemporalAmount {
+                return Duration.ofHours(VALIDATOR_TTL_HOURS)
+            }
+        }
+        return token.validateAndDecrypt(fernetKey, validator)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun deriveKey(inputPassword: String): String? {
+        val salt = KEY_SALT.toByteArray()
+        val derivedKeyLength = DERIVED_KEY_LENGTH
+        val iterations = KEY_ITERATIONS
+        val spec = PBEKeySpec(inputPassword.toCharArray(), salt, iterations, derivedKeyLength)
+        val key = SecretKeyFactory.getInstance(KEY_ALGORITHM)
+            .generateSecret(spec).encoded
+        return getUrlEncoder().encodeToString(key)
     }
 
     fun saveData(): Boolean {
@@ -81,6 +132,34 @@ object Manager {
         return true
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun encryptData(plainData: String): String {
+        val key = deriveKey(masterPassword)
+        val fernetKey = Key(key)
+        val token = Token.generate(fernetKey, plainData)
+        return token.serialise() // the Base64url encoded token
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun exportData(outputStream: OutputStream) : Boolean{
+        try {
+            saveData()
+            var saveString = ""
+            for (acc in accountList) {
+                saveString += Json.encodeToString(acc) + "\n"
+            }
+            val encryptedData = encryptData(saveString)
+            // write
+            outputStream.write(encryptedData.toByteArray())
+            outputStream.close()
+
+        } catch (err: Exception) {
+            Log.e(TAG, err.message.toString())
+            return false
+        }
+        return true
+    }
+
     fun getAccount(requestedAccountName: String): Account? {
         return accountList.find { acc -> acc.accountName == requestedAccountName }
     }
@@ -90,7 +169,8 @@ object Manager {
     }
 
     fun createAccount(initialName: String): Boolean {
-        val newAccount = Account(accountName=initialName,
+        val newAccount = Account(
+            accountName = initialName,
             "",
             "",
             "",
