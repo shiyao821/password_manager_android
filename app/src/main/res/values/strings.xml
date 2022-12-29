@@ -84,7 +84,6 @@
     <string name="activity_label_account_details">Account Details</string>
     <string name="activity_label_main_menu">Main Menu</string>
     <string name="activity_label_setup">Setup</string>
-    <string name="activity_label_login">Login</string>
     <string name="error">Error</string>
     <string name="activity_label_filtered_results">Filtered Results</string>
     <string name="IMPORT_EXPORT_DATA">Import / export data</string>
