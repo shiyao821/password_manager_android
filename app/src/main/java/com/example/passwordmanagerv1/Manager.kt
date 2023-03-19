@@ -66,6 +66,7 @@ object Manager {
                 datafile.delete()
                 createNewDataFile(inputPassword)
             }
+            Log.i(TAG, "$inputPassword|")
             val lines: List<String> = if (importData != null) {
                 val dataAsString = importData.readBytes().decodeToString()
                 importData.close()
@@ -85,6 +86,7 @@ object Manager {
             }
         } catch (_: TokenValidationException) {
             Log.i(TAG, "Invalid Password")
+            return false
         } catch (err: Exception) {
             Log.e(TAG, err.toString())
             return false
@@ -314,5 +316,15 @@ object Manager {
 
     fun getAllLinkedAccounts(): Map<String, Int> {
         return accountList.map { it.linkedAccounts }.flatten().groupingBy { it }.eachCount()
+    }
+
+    fun deleteAccount(accountName: String) {
+        accountList.remove(this.getAccount(accountName))
+        // Remove all other accounts with reference to this account in Linked Accounts
+        for (account in accountList) {
+            if (account.linkedAccounts.contains(accountName)) {
+                account.linkedAccounts.remove(accountName)
+            }
+        }
     }
 }

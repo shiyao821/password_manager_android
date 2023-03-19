@@ -59,7 +59,6 @@ class SecurityActivity : AppCompatActivity() {
         if (importingData != null) {
             tvEnterPassword.text = resources.getString(R.string.prompt_import_data_password_enter)
         }
-        login(DEBUG_PASSWORD)
     }
 
     private fun login(password: String) {

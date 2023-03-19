@@ -101,4 +101,7 @@
     <string name="prompt_password_enter">Enter Master Password</string>
     <string name="prompt_import_data_password_enter">Enter the Master Password for the imported data</string>
     <string name="hint_input">Enter here</string>
+    <string name="button_delete_account">Delete Account</string>
+    <string name="alert_title_account_delete_confirmation">Are you sure you want to delete this account?</string>
+    <string name="alert_message_account_delete_confirmation">Account cannot be recovered. All other accounts will lose their link to this account. </string>
 </resources>

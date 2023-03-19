@@ -27,13 +27,13 @@ class SearchByAccountNameActivity : AppCompatActivity() {
             // temp solution to filtered results not updating after filtered account is edited
             title = resources.getString(R.string.activity_label_filtered_results)
         }
-        searchResults = listStringExtra ?: Manager.getAllAccountNames()
         svSearch = findViewById(R.id.svSearch)
         rvSearchResult = findViewById(R.id.rvSearchResult)
     }
 
     override fun onStart() {
         super.onStart()
+        searchResults = Manager.getAllAccountNames()
         adapter = SearchByAccountNameAdapter(
             this,
             searchResults,

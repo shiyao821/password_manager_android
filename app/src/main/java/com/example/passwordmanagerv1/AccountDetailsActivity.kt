@@ -5,10 +5,13 @@ import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.View.OnClickListener
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -41,6 +44,34 @@ class AccountDetailsActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         populateValues()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_account_details, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.miDeleteAccount -> {
+                AlertDialog.Builder(this)
+                    .setTitle(resources.getString(R.string.alert_title_account_delete_confirmation))
+                    .setMessage(resources.getString(R.string.alert_message_account_delete_confirmation))
+                    .setPositiveButton(resources.getString(R.string.button_delete)) { _,_ ->
+                        this.deleteAccount(account.accountName)
+                    }
+                    .setNegativeButton(resources.getString(R.string.button_cancel)) { _,_ -> }
+                    .show()
+            }
+            else -> {}
+        }
+        return true
+    }
+
+    private fun deleteAccount(accountName :String) {
+
+        Manager.deleteAccount(account.accountName)
+        this@AccountDetailsActivity.finish()
     }
 
     private fun populateValues() {
