@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.*
@@ -40,6 +41,8 @@ class EditLinkedAccountsActivity : AppCompatActivity() {
         linkedAccounts = Manager.getLinkedAccounts(accountInContext)
         Log.i(TAG, "Received Linked Accounts $linkedAccounts")
 
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+
         clAddNewLink = findViewById(R.id.clAddNewLink)
         ivIcon = findViewById(R.id.ivLinkedAccountAdd)
         etAddLinkedAccount = findViewById(R.id.etAddLinkedAccount)
@@ -67,6 +70,14 @@ class EditLinkedAccountsActivity : AppCompatActivity() {
         btnDone.setOnClickListener {
             this.finish()
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun addNewLinkClick() {

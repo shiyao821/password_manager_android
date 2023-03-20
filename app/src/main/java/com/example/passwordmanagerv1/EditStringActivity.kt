@@ -2,6 +2,7 @@ package com.example.passwordmanagerv1
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
@@ -25,6 +26,7 @@ class EditStringActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_string)
 
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         accountName = intent.getStringExtra(EXTRA_ACCOUNT_NAME)!!
         accountFieldTypeToEdit = intent.getSerializableExtra(EXTRA_ACCOUNT_FIELD_TYPE) as AccountFieldType
 
@@ -53,6 +55,14 @@ class EditStringActivity : AppCompatActivity() {
                 else -> false
             }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun handleInputConfirmation() : Boolean {

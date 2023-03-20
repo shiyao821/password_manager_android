@@ -37,6 +37,7 @@ class EditMiscActivity : AppCompatActivity() {
         etNewValue = findViewById(R.id.etNewValue)
         btnSubmit = findViewById(R.id.btnSubmit)
 
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         val previousValue = Manager.getMiscValue(accountName, miscTitle)
         etNewTitle.setText(miscTitle)
@@ -70,6 +71,10 @@ class EditMiscActivity : AppCompatActivity() {
                     }
                     .setNegativeButton(resources.getString(R.string.button_cancel)) { _,_ -> }
                     .show()
+            }
+            android.R.id.home -> {
+                onBackPressed()
+                return true
             }
             else -> {}
         }

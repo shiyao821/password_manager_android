@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.util.Log
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -40,6 +41,8 @@ class ImportExportActivity : AppCompatActivity() {
         btnImportData = findViewById(R.id.btnImportData)
         btnExportData = findViewById(R.id.btnExportData)
 
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+
         btnImportData.setOnClickListener {
             if (isPermissionGranted(this@ImportExportActivity, READ_EXTERNAL_STORAGE)) {
                 launchIntentForFileImport()
@@ -58,6 +61,14 @@ class ImportExportActivity : AppCompatActivity() {
                     WRITE_EXTERNAL_STORAGE, PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE)
             }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun launchIntentForFileImport() {

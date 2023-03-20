@@ -3,6 +3,7 @@ package com.example.passwordmanagerv1
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.SearchView
 import android.widget.SearchView.OnQueryTextListener
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,6 +23,8 @@ class SearchByAccountNameActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_by)
 
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+
         val listStringExtra = intent.getStringArrayListExtra(EXTRA_ACCOUNT_NAMES_LIST)
         if (listStringExtra != null) {
             // temp solution to filtered results not updating after filtered account is edited
@@ -30,6 +33,14 @@ class SearchByAccountNameActivity : AppCompatActivity() {
         searchResults = listStringExtra ?: Manager.getAllAccountNames()
         svSearch = findViewById(R.id.svSearch)
         rvSearchResult = findViewById(R.id.rvSearchResult)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onStart() {

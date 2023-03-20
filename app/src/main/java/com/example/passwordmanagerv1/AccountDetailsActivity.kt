@@ -5,6 +5,7 @@ import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.view.View.OnClickListener
 import android.widget.ImageView
@@ -28,6 +29,7 @@ class AccountDetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account_details)
         res = this.resources
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         val accountName = intent.getStringExtra(EXTRA_ACCOUNT_NAME)!!
         account = Manager.getAccount(accountName)!!
@@ -41,6 +43,14 @@ class AccountDetailsActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         populateValues()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun populateValues() {
