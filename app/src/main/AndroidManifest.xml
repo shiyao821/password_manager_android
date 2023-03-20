@@ -19,7 +19,6 @@
             android:name=".ImportExportActivity"
             android:exported="false"
             android:label="@string/activity_label_import_export_data"
-            android:parentActivityName=".MainActivity"
             >
             <meta-data
                 android:name="android.app.lib_name"
@@ -54,7 +53,6 @@
             android:name=".EditStringActivity"
             android:exported="false"
             android:label="@string/activity_label_edit_entry_prefix"
-            android:parentActivityName=".AccountDetailsActivity"
             android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.app.lib_name"
@@ -64,12 +62,12 @@
             android:name=".SearchByAccountNameActivity"
             android:exported="false"
             android:label="@string/activity_label_search_by_name"
-            android:parentActivityName=".MainActivity" />
+            />
         <activity
             android:name=".AccountDetailsActivity"
             android:exported="false"
             android:label="@string/activity_label_account_details"
-            android:parentActivityName=".MainActivity">
+            >
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
