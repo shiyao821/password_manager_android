@@ -34,18 +34,8 @@ class SearchByAccountNameActivity : AppCompatActivity() {
         searchResults = listStringExtra ?: Manager.getAllAccountNames()
         svSearch = findViewById(R.id.svSearch)
         rvSearchResult = findViewById(R.id.rvSearchResult)
-    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            onBackPressed()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
-    }
 
-    override fun onStart() {
-        super.onStart()
         adapter = SearchByAccountNameAdapter(
             this,
             searchResults,
@@ -77,6 +67,14 @@ class SearchByAccountNameActivity : AppCompatActivity() {
                 return true
             }
         })
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onResume() {

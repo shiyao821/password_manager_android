@@ -56,10 +56,6 @@ class SearchByFieldActivity : AppCompatActivity() {
 
         svSearch = findViewById(R.id.svSearch)
         rvSearchResult = findViewById(R.id.rvSearchResult)
-    }
-
-    override fun onStart() {
-        super.onStart()
         adapter = SearchByFieldAdapter(
             this,
             results.keys.toList().sorted(),
