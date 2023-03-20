@@ -13,6 +13,8 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.passwordmanagerv1.adapters.LinkedAccountsFieldAdapter
+import com.example.passwordmanagerv1.adapters.MiscFieldsAdapter
 import com.example.passwordmanagerv1.utils.*
 
 

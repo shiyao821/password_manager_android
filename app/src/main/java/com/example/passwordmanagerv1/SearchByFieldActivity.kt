@@ -8,8 +8,8 @@ import android.view.MenuItem
 import android.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.passwordmanagerv1.adapters.SearchByFieldAdapter
 import com.example.passwordmanagerv1.utils.*
-import java.util.*
 import kotlin.collections.ArrayList
 
 class SearchByFieldActivity : AppCompatActivity() {

@@ -8,6 +8,7 @@ import android.widget.SearchView
 import android.widget.SearchView.OnQueryTextListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.passwordmanagerv1.adapters.SearchByAccountNameAdapter
 import com.example.passwordmanagerv1.utils.CommonUIBehaviors
 import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT_NAME
 import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT_NAMES_LIST

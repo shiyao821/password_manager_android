@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.passwordmanagerv1.adapters.LinkedAccountsAdapter
 import com.example.passwordmanagerv1.utils.CommonUIBehaviors
 import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT_NAME
 

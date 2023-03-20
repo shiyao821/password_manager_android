@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.passwordmanagerv1.adapters.MenuAdapter
 import com.example.passwordmanagerv1.utils.*
 
 class MainActivity : AppCompatActivity() {
