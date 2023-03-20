@@ -16,6 +16,7 @@ import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 import java.time.Duration
+import java.time.Instant
 import java.time.temporal.TemporalAmount
 import java.util.Base64.getUrlEncoder
 import javax.crypto.SecretKeyFactory
@@ -85,6 +86,7 @@ object Manager {
             }
         } catch (_: TokenValidationException) {
             Log.i(TAG, "Invalid Password")
+            return false
         } catch (err: Exception) {
             Log.e(TAG, err.toString())
             return false
@@ -99,7 +101,7 @@ object Manager {
         val fernetKey = Key(encodedKey)
         val validator = object : StringValidator {
             override fun getTimeToLive(): TemporalAmount {
-                return Duration.ofHours(VALIDATOR_TTL_HOURS)
+                return Duration.ofSeconds(Instant.MAX.epochSecond);
             }
         }
         return token.validateAndDecrypt(fernetKey, validator)
