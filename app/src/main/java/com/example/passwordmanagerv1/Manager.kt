@@ -133,7 +133,6 @@ object Manager {
                 saveString += Json.encodeToString(account) + "\n"
                 datafile.writeText(saveString)
             }
-            Log.i(TAG, saveString)
         } catch (err: Exception) {
             Log.e(TAG, err.message.toString())
             return false
