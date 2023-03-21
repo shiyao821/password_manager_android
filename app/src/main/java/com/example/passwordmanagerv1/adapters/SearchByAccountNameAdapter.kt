@@ -10,11 +10,12 @@ import com.example.passwordmanagerv1.R
 
 class SearchByAccountNameAdapter (
     private val context: Context,
-    private val results: List<String>,
+    private var results: List<String>,
     private val onItemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<SearchByAccountNameAdapter.ViewHolder>() {
 
     private var displayList = results
+    private var filterText = ""
 
     interface OnItemClickListener {
         fun onItemClick(accountName: String)
@@ -42,8 +43,18 @@ class SearchByAccountNameAdapter (
         holder.bind(position)
     }
 
+    fun updateData(newResults : List<String>) {
+        results = newResults
+        displayList = results
+        if (filterText.isNotEmpty()) {
+            filter(filterText)
+            return
+        }
+        notifyDataSetChanged()
+    }
 
     fun filter(input: String) {
+        filterText = input
         displayList = results.filter{ accountName -> accountName.contains(input) }
         notifyDataSetChanged()
     }

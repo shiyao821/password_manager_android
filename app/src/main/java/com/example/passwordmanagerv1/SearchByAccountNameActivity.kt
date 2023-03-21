@@ -80,5 +80,7 @@ class SearchByAccountNameActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         CommonUIBehaviors.focusViewAndShowKeyboard(svSearch, this)
+        searchResults = Manager.getAllAccountNames()
+        adapter.updateData(searchResults)
     }
 }
