@@ -82,7 +82,7 @@ class SecurityActivity : AppCompatActivity() {
             finish()
         } else {
             if (!manager.loadData(null, password, false)) {
-                Toast.makeText(this, R.string.toast_data_load_failure, Toast.LENGTH_LONG).show()
+                Toast.makeText(this, R.string.toast_invalid_password, Toast.LENGTH_LONG).show()
                 return
             }
             val intent = Intent(this, MainActivity::class.java)

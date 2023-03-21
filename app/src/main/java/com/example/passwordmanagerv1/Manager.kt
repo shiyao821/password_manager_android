@@ -41,8 +41,10 @@ object Manager {
 
     fun createNewDataFile(passwordInput: String): Boolean {
         Log.i(TAG, "New password set up")
+        masterPassword = passwordInput
         datafile = File(applicationFilePath, DATAFILE_NAME_AND_EXTENSION)
         val textdata = listOf(
+            masterPassword,
             applicationContext.resources.getString(R.string.sampleAccountJson),
             applicationContext.resources.getString(R.string.sampleAccountJson2),
             applicationContext.resources.getString(R.string.sampleAccountJson3),
@@ -65,6 +67,7 @@ object Manager {
         try {
             if (debug && importData == null) {
                 datafile.delete()
+                Log.i(TAG, "Old datafile deleted")
                 createNewDataFile(inputPassword)
             }
             val lines: List<String> = if (importData != null) {
@@ -73,7 +76,12 @@ object Manager {
                 val decodedString = decryptData(dataAsString, inputPassword)
                 decodedString.split("\n")
             } else {
-                datafile.readLines()
+                val lines = datafile.readLines()
+                if (debug) { Log.i(TAG, "Datafile first line: ${lines[0]}") }
+                if (inputPassword != lines[0]) {
+                    throw TokenValidationException("Password mismatch")
+                }
+                lines.subList(1, lines.size)
             }
             masterPassword = inputPassword // inputPassword is correct at this stage
 
@@ -120,7 +128,7 @@ object Manager {
 
     fun saveData(): Boolean {
         try {
-            var saveString = ""
+            var saveString = masterPassword + "\n"
             for (account in accountList) {
                 saveString += Json.encodeToString(account) + "\n"
                 datafile.writeText(saveString)
