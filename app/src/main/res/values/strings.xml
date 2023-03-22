@@ -101,4 +101,5 @@
     <string name="prompt_password_enter">Enter Master Password</string>
     <string name="prompt_import_data_password_enter">Enter the Master Password for the imported data</string>
     <string name="hint_input">Enter here</string>
+    <string name="activity_label_filtered_results_prefix">"Accounts with"</string>
 </resources>

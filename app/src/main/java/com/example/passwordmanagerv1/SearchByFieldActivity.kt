@@ -30,17 +30,7 @@ class SearchByFieldActivity : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         accountFieldType = intent.getSerializableExtra(EXTRA_ACCOUNT_FIELD_TYPE) as AccountFieldType
-        results = when (accountFieldType) {
-            AccountFieldType.username -> Manager.getAllUsernames()
-            AccountFieldType.email -> Manager.getAllEmails()
-            AccountFieldType.phone -> Manager.getAllPhoneNumbers()
-            AccountFieldType.password -> Manager.getAllPasswords()
-            AccountFieldType.linkedAccounts -> Manager.getAllLinkedAccounts()
-            else -> {
-                Log.e(TAG, "Error in account field type")
-                mapOf()
-            }
-        }
+        results = searchField()
 
         title = when (accountFieldType) {
             AccountFieldType.username -> resources.getString(R.string.SEARCH_USERNAME).capitalize()
@@ -65,8 +55,9 @@ class SearchByFieldActivity : AppCompatActivity() {
                         this@SearchByFieldActivity,
                         SearchByAccountNameActivity::class.java
                     )
-                    val filteredAccountNames = Manager.getAccountNamesFilteredByField(accountFieldType, item) as ArrayList<String>
-                    intent.putStringArrayListExtra(EXTRA_ACCOUNT_NAMES_LIST, filteredAccountNames)
+
+                    intent.putExtra(EXTRA_ACCOUNT_FIELD_TYPE, accountFieldType)
+                    intent.putExtra(EXTRA_ACCOUNT_FIELD_VALUE, item)
                     startActivity(intent)
                 }
             }
@@ -90,6 +81,20 @@ class SearchByFieldActivity : AppCompatActivity() {
         })
     }
 
+    private fun searchField() : Map<String, Int> {
+        return when (accountFieldType) {
+            AccountFieldType.username -> Manager.getAllUsernames()
+            AccountFieldType.email -> Manager.getAllEmails()
+            AccountFieldType.phone -> Manager.getAllPhoneNumbers()
+            AccountFieldType.password -> Manager.getAllPasswords()
+            AccountFieldType.linkedAccounts -> Manager.getAllLinkedAccounts()
+            else -> {
+                Log.e(TAG, "Error in account field type")
+                mapOf()
+            }
+        }
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
             onBackPressed()
@@ -101,5 +106,7 @@ class SearchByFieldActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         CommonUIBehaviors.focusViewAndShowKeyboard(svSearch, this)
+        results = searchField()
+        adapter.updateData(results.keys.toList().sorted())
     }
 }
