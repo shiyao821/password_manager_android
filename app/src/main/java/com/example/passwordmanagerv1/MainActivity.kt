@@ -118,6 +118,7 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         if (hasBackBeenPressed) {
             finish(); // finish activity
+            super.onBackPressed()
         } else {
             Toast.makeText(
                 this, this.resources.getString(R.string.toast_back_press_again_log_out),
@@ -128,6 +129,5 @@ class MainActivity : AppCompatActivity() {
                 hasBackBeenPressed = false;
             }, this.resources.getInteger(R.integer.double_back_press_max_interval_ms).toLong());
         }
-        super.onBackPressed()
     }
 }
