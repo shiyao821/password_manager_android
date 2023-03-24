@@ -75,7 +75,8 @@ class SetupActivity : AppCompatActivity() {
         if (Manager.createNewDataFile(passwordInput)) {
             Log.i(TAG, "New password set up")
             AlertDialog.Builder(this)
-                .setTitle(R.string.dialog_new_master_password)
+                .setTitle(R.string.alert_title_master_password_created)
+                .setMessage(R.string.alert_message_master_password_created)
                 .setPositiveButton(R.string.button_acknowledge){ _, _ ->
                     val resultData = Intent()
                     setResult(Activity.RESULT_OK, resultData)

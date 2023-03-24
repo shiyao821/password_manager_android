@@ -24,7 +24,6 @@
     <string name="toast_back_press_again_log_out">Press back again to save and log out</string>
     <string name="toast_copy_suffix">copied to clipboard</string>
 
-    <string name="dialog_new_master_password">A new data file and corresponding master password has been created</string>
     <string name="dialog_edit_account_name_title">Edit Account Name</string>
     <string name="dialog_edit_username_title">Edit Username</string>
     <string name="dialog_edit_email_title">Edit Email</string>
@@ -58,6 +57,8 @@
 
     <string name="button_add_link">Add Link</string>
     <string name="alert_title_account_not_found">There is no such account</string>
+    <string name="alert_title_master_password_created">New master password created</string>
+    <string name="alert_message_master_password_created">This password will be used for this app at login</string>
     <string name="toast_account_link_success">Link successfully created</string>
     <string name="alert_title_account_already_linked">This account is already linked</string>
     <string name="button_done">DONE</string>
