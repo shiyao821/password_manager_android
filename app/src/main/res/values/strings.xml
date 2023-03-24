@@ -102,4 +102,9 @@
     <string name="prompt_import_data_password_enter">Enter the Master Password for the imported data</string>
     <string name="hint_input">Enter here</string>
     <string name="activity_label_filtered_results_prefix">"Accounts with"</string>
+    <string name="alert_title_biometric_verification">User verification required</string>
+    <string name="alert_subtitle_biometric_verification">Log in using your biometric credential</string>
+    <string name="toast_reminder_biometrics_setup">Please setup biometric authentication on your phone for greater security</string>
+    <string name="alert_title_biometric_setup">Biometric verification setup</string>
+    <string name="alert_message_biometric_setup">This app needs your phone\'s biometrics for security. You will now be redirected to set it up.</string>
 </resources>

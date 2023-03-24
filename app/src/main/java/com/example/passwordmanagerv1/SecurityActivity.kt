@@ -3,6 +3,7 @@ package com.example.passwordmanagerv1
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.inputmethod.EditorInfo
@@ -10,10 +11,12 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.biometric.BiometricPrompt
 import com.example.passwordmanagerv1.utils.CommonUIBehaviors
-import com.example.passwordmanagerv1.utils.DEBUG_PASSWORD
 import com.example.passwordmanagerv1.utils.EXTRA_IMPORT_DATA_URI
+
 
 class SecurityActivity : AppCompatActivity() {
 
@@ -21,6 +24,7 @@ class SecurityActivity : AppCompatActivity() {
     private lateinit var ettpAppPassword: EditText
     private lateinit var tvEnterPassword: TextView
     private lateinit var manager: Manager
+    private lateinit var biometricAuthenticatorCallback: BiometricPrompt.AuthenticationCallback
     private var importingData: Uri? = null
 
     companion object {
@@ -28,6 +32,7 @@ class SecurityActivity : AppCompatActivity() {
         private const val SETUP_PASSWORD_CODE = 1
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_security)
@@ -59,11 +64,36 @@ class SecurityActivity : AppCompatActivity() {
         if (importingData != null) {
             tvEnterPassword.text = resources.getString(R.string.prompt_import_data_password_enter)
         }
-
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     private fun login(password: String) {
         Log.i(TAG, "Attempting to log in")
+
+        biometricAuthenticatorCallback = object : BiometricPrompt.AuthenticationCallback() {
+            override fun onAuthenticationError(errorCode: Int,
+                                               errString: CharSequence) {
+                super.onAuthenticationError(errorCode, errString)
+                Log.e(TAG, "Authentication error: $errString, $errorCode")
+            }
+
+            override fun onAuthenticationSucceeded(
+                result: BiometricPrompt.AuthenticationResult) {
+                super.onAuthenticationSucceeded(result)
+                dataDecryption(password)
+            }
+
+            override fun onAuthenticationFailed() {
+                super.onAuthenticationFailed()
+                Toast.makeText(this@SecurityActivity, "Authentication failed", Toast.LENGTH_SHORT).show()
+                Log.i(TAG, "biometrics failed")
+                moveTaskToBack(true)
+            }
+        }
+        Authenticator.authenticate(this, biometricAuthenticatorCallback)
+    }
+
+    private fun dataDecryption(password: String) {
         if (!manager.checkDataFile()) {
             // Likely first time starting app
             // setup app master password
