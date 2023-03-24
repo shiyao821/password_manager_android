@@ -15,6 +15,8 @@ import android.util.Log
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
@@ -33,6 +35,8 @@ class ImportExportActivity : AppCompatActivity() {
 
     private lateinit var btnImportData: Button
     private lateinit var btnExportData: Button
+    private lateinit var verificationLauncherForImport: ActivityResultLauncher<Intent>
+    private lateinit var verificationLauncherForExport: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +49,7 @@ class ImportExportActivity : AppCompatActivity() {
 
         btnImportData.setOnClickListener {
             if (isPermissionGranted(this@ImportExportActivity, READ_EXTERNAL_STORAGE)) {
-                launchIntentForFileImport()
+                verifyIdentityForImport()
             } else {
                 Log.i(TAG, "Requesting Permission")
                 requestPermission(this@ImportExportActivity,
@@ -54,14 +58,40 @@ class ImportExportActivity : AppCompatActivity() {
         }
         btnExportData.setOnClickListener {
             if (isPermissionGranted(this@ImportExportActivity, WRITE_EXTERNAL_STORAGE)) {
-                launchIntentForFileExport()
+                verifyIdentityForExport()
             } else {
                 Log.i(TAG, "Requesting Permission")
                 requestPermission(this@ImportExportActivity,
                     WRITE_EXTERNAL_STORAGE, PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE)
             }
         }
+        verificationLauncherForImport = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) {
+            Log.i(TAG, "returned from verification")
+            if (it.resultCode == Activity.RESULT_OK) {
+                Log.i(TAG, "result OK")
+                if(it.data?.getBooleanExtra(EXTRA_VERIFICATION, false) == true) {
+                    launchIntentForFileImport()
+                } else {
+                    Toast.makeText(this, R.string.toast_invalid_password, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        verificationLauncherForExport = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                if(it.data?.getBooleanExtra(EXTRA_VERIFICATION, false) == true) {
+                    launchIntentForFileExport()
+                } else {
+                    Toast.makeText(this, R.string.toast_invalid_password, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
+
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
@@ -137,8 +167,8 @@ class ImportExportActivity : AppCompatActivity() {
     ) {
         if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             when (requestCode) {
-                PERMISSION_REQUEST_READ_EXTERNAL_STORAGE -> launchIntentForFileImport()
-                PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE -> launchIntentForFileExport()
+                PERMISSION_REQUEST_READ_EXTERNAL_STORAGE -> verifyIdentityForImport()
+                PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE -> verifyIdentityForExport()
                 else -> {}
             }
         } else {
@@ -203,12 +233,28 @@ class ImportExportActivity : AppCompatActivity() {
                     " expected $DATAFILE_MIMETYPE_BINARY or $DATAFILE_MIMETYPE_PLAIN")
             return
         }
-        launchSecurityActivity(uri)
+        launchSecurityActivityForDecryption(uri)
     }
 
-    private fun launchSecurityActivity(uri: Uri) {
+    private fun launchSecurityActivityForDecryption(uri: Uri) {
         val intent = Intent(this, SecurityActivity::class.java)
         intent.putExtra(EXTRA_IMPORT_DATA_URI, uri)
         startActivity(intent)
+    }
+
+    private fun verifyIdentityForImport() {
+        Log.i(TAG, "before intent for verification launch")
+        verificationLauncherForImport.launch(
+            Intent(this, SecurityActivity::class.java)
+                .putExtra(EXTRA_VERIFICATION, true))
+        Log.i(TAG, "intent for verification launched")
+    }
+
+    private fun verifyIdentityForExport() {
+        Log.i(TAG, "before intent for verification launch")
+        verificationLauncherForExport.launch(
+            Intent(this, SecurityActivity::class.java)
+                .putExtra(EXTRA_VERIFICATION, true))
+        Log.i(TAG, "intent for verification launched")
     }
 }

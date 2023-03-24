@@ -324,4 +324,8 @@ object Manager {
     fun getAllLinkedAccounts(): Map<String, Int> {
         return accountList.map { it.linkedAccounts }.flatten().groupingBy { it }.eachCount()
     }
+
+    fun verifyPassword(input: String): Boolean {
+        return masterPassword == input
+    }
 }

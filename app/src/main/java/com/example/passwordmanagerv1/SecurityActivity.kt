@@ -12,8 +12,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.passwordmanagerv1.utils.CommonUIBehaviors
-import com.example.passwordmanagerv1.utils.DEBUG_PASSWORD
 import com.example.passwordmanagerv1.utils.EXTRA_IMPORT_DATA_URI
+import com.example.passwordmanagerv1.utils.EXTRA_VERIFICATION
 
 class SecurityActivity : AppCompatActivity() {
 
@@ -22,6 +22,7 @@ class SecurityActivity : AppCompatActivity() {
     private lateinit var tvEnterPassword: TextView
     private lateinit var manager: Manager
     private var importingData: Uri? = null
+    private var isVerificationOnly = false
 
     companion object {
         private const val TAG = "clg:Security"
@@ -33,6 +34,8 @@ class SecurityActivity : AppCompatActivity() {
         setContentView(R.layout.activity_security)
 
         importingData = intent.getParcelableExtra(EXTRA_IMPORT_DATA_URI)
+        isVerificationOnly = intent.getBooleanExtra(EXTRA_VERIFICATION, false) == true
+        Log.i(TAG, "is $isVerificationOnly")
 
         btnLogin = findViewById(R.id.btnLogin)
         ettpAppPassword = findViewById(R.id.ettpAppPasswordLogin)
@@ -63,6 +66,15 @@ class SecurityActivity : AppCompatActivity() {
     }
 
     private fun login(password: String) {
+        if (isVerificationOnly) {
+            Log.i(TAG, "verifying password")
+            val verificationResult = Manager.verifyPassword(password)
+            val returningData = Intent().putExtra(EXTRA_VERIFICATION, verificationResult)
+            setResult(Activity.RESULT_OK, returningData)
+            this@SecurityActivity.finish()
+            return
+        }
+
         Log.i(TAG, "Attempting to log in")
         if (!manager.checkDataFile()) {
             // Likely first time starting app
