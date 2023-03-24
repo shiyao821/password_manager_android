@@ -87,6 +87,7 @@ class SecurityActivity : AppCompatActivity() {
             val inputStream = contentResolver.openInputStream(importingData!!)
             if (manager.loadData(inputStream, password, false)) {
                 Toast.makeText(this, resources.getString(R.string.toast_import_data_success), Toast.LENGTH_SHORT).show()
+                manager.saveData()
             } else {
                 Toast.makeText(this, resources.getString(R.string.toast_import_data_failure), Toast.LENGTH_SHORT).show()
             }
