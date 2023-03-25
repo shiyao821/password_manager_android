@@ -1,12 +1,16 @@
 package com.example.passwordmanagerv1
 
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.widget.SearchView
 import android.widget.SearchView.OnQueryTextListener
+import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.biometric.BiometricPrompt
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.passwordmanagerv1.adapters.SearchByAccountNameAdapter
@@ -44,13 +48,33 @@ class SearchByAccountNameActivity : AppCompatActivity() {
             this,
             searchResults,
             object : SearchByAccountNameAdapter.OnItemClickListener {
+                @RequiresApi(Build.VERSION_CODES.R)
                 override fun onItemClick(accountName: String) {
-                    val intent = Intent(
-                        this@SearchByAccountNameActivity,
-                        AccountDetailsActivity::class.java
-                    )
-                    intent.putExtra(EXTRA_ACCOUNT_NAME, accountName)
-                    startActivity(intent)
+
+                    val biometricAuthenticatorCallback = object : BiometricPrompt.AuthenticationCallback() {
+                        override fun onAuthenticationError(errorCode: Int,
+                                                           errString: CharSequence) {
+                            super.onAuthenticationError(errorCode, errString)
+                            Log.e(AccountDetailsActivity.TAG, "Authentication error: $errString, $errorCode")
+                        }
+
+                        override fun onAuthenticationSucceeded(
+                            result: BiometricPrompt.AuthenticationResult) {
+                            super.onAuthenticationSucceeded(result)
+
+                            val intent = Intent(
+                                this@SearchByAccountNameActivity,
+                                AccountDetailsActivity::class.java
+                            ).putExtra(EXTRA_ACCOUNT_NAME, accountName)
+                            startActivity(intent)
+                        }
+
+                        override fun onAuthenticationFailed() {
+                            super.onAuthenticationFailed()
+                            Log.i(AccountDetailsActivity.TAG, "biometrics failed")
+                        }
+                    }
+                    Authenticator.authenticate(this@SearchByAccountNameActivity, biometricAuthenticatorCallback)
                 }
             }
         )
