@@ -58,6 +58,8 @@
 
     <string name="button_add_link">Add Link</string>
     <string name="alert_title_account_not_found">There is no such account</string>
+    <string name="alert_title_master_password_created">New master password created</string>
+    <string name="alert_message_master_password_created">This password will be used for this app at login</string>
     <string name="toast_account_link_success">Link successfully created</string>
     <string name="alert_title_account_already_linked">This account is already linked</string>
     <string name="button_done">DONE</string>
@@ -101,6 +103,12 @@
     <string name="prompt_password_enter">Enter Master Password</string>
     <string name="prompt_import_data_password_enter">Enter the Master Password for the imported data</string>
     <string name="hint_input">Enter here</string>
+    <string name="activity_label_filtered_results_prefix">"Accounts with"</string>
+    <string name="alert_title_biometric_verification">User verification required</string>
+    <string name="alert_subtitle_biometric_verification">Log in using your biometric credential</string>
+    <string name="toast_reminder_biometrics_setup">Please setup biometric authentication on your phone for greater security</string>
+    <string name="alert_title_biometric_setup">Biometric verification setup</string>
+    <string name="alert_message_biometric_setup">This app needs your phone\'s biometrics for security. You will now be redirected to set it up.</string>
     <string name="button_delete_account">Delete Account</string>
     <string name="alert_title_account_delete_confirmation">Are you sure you want to delete this account?</string>
     <string name="alert_message_account_delete_confirmation">Account cannot be recovered. All other accounts will lose their link to this account. </string>

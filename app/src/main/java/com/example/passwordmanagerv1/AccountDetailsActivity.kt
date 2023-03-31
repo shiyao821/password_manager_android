@@ -15,6 +15,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.passwordmanagerv1.adapters.LinkedAccountsFieldAdapter
+import com.example.passwordmanagerv1.adapters.MiscFieldsAdapter
 import com.example.passwordmanagerv1.utils.*
 
 
@@ -31,6 +33,7 @@ class AccountDetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account_details)
         res = this.resources
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         val accountName = intent.getStringExtra(EXTRA_ACCOUNT_NAME)!!
         account = Manager.getAccount(accountName)!!
@@ -63,6 +66,9 @@ class AccountDetailsActivity : AppCompatActivity() {
                     .setNegativeButton(resources.getString(R.string.button_cancel)) { _,_ -> }
                     .show()
             }
+            android.R.id.home -> {
+                onBackPressed()
+            }
             else -> {}
         }
         return true
@@ -73,6 +79,7 @@ class AccountDetailsActivity : AppCompatActivity() {
         Manager.deleteAccount(account.accountName)
         this@AccountDetailsActivity.finish()
     }
+
 
     private fun populateValues() {
         val tvAccountNameValue = findViewById<TextView>(R.id.tvAccountNameValue)

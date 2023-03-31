@@ -1,4 +1,4 @@
-package com.example.passwordmanagerv1
+package com.example.passwordmanagerv1.adapters
 
 import android.content.Context
 import android.util.Log
@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.passwordmanagerv1.R
 
 class MenuAdapter (
     private val context: Context,

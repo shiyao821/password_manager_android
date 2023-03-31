@@ -3,6 +3,7 @@ package com.example.passwordmanagerv1
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.inputmethod.EditorInfo
@@ -10,10 +11,13 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.biometric.BiometricPrompt
 import com.example.passwordmanagerv1.utils.CommonUIBehaviors
-import com.example.passwordmanagerv1.utils.DEBUG_PASSWORD
 import com.example.passwordmanagerv1.utils.EXTRA_IMPORT_DATA_URI
+import com.example.passwordmanagerv1.utils.EXTRA_VERIFICATION
+
 
 class SecurityActivity : AppCompatActivity() {
 
@@ -21,18 +25,23 @@ class SecurityActivity : AppCompatActivity() {
     private lateinit var ettpAppPassword: EditText
     private lateinit var tvEnterPassword: TextView
     private lateinit var manager: Manager
+    private lateinit var biometricAuthenticatorCallback: BiometricPrompt.AuthenticationCallback
     private var importingData: Uri? = null
+    private var isVerificationOnly = false
 
     companion object {
         private const val TAG = "clg:Security"
         private const val SETUP_PASSWORD_CODE = 1
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_security)
 
         importingData = intent.getParcelableExtra(EXTRA_IMPORT_DATA_URI)
+        isVerificationOnly = intent.getBooleanExtra(EXTRA_VERIFICATION, false) == true
+        Log.i(TAG, "is $isVerificationOnly")
 
         btnLogin = findViewById(R.id.btnLogin)
         ettpAppPassword = findViewById(R.id.ettpAppPasswordLogin)
@@ -61,8 +70,43 @@ class SecurityActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     private fun login(password: String) {
+        if (isVerificationOnly) {
+            Log.i(TAG, "verifying password")
+            val verificationResult = Manager.verifyPassword(password)
+            val returningData = Intent().putExtra(EXTRA_VERIFICATION, verificationResult)
+            setResult(Activity.RESULT_OK, returningData)
+            this@SecurityActivity.finish()
+            return
+        }
+
         Log.i(TAG, "Attempting to log in")
+
+        biometricAuthenticatorCallback = object : BiometricPrompt.AuthenticationCallback() {
+            override fun onAuthenticationError(errorCode: Int,
+                                               errString: CharSequence) {
+                super.onAuthenticationError(errorCode, errString)
+                Log.e(TAG, "Authentication error: $errString, $errorCode")
+            }
+
+            override fun onAuthenticationSucceeded(
+                result: BiometricPrompt.AuthenticationResult) {
+                super.onAuthenticationSucceeded(result)
+                dataDecryption(password)
+            }
+
+            override fun onAuthenticationFailed() {
+                super.onAuthenticationFailed()
+                Toast.makeText(this@SecurityActivity, "Authentication failed", Toast.LENGTH_SHORT).show()
+                Log.i(TAG, "biometrics failed")
+                moveTaskToBack(true)
+            }
+        }
+        Authenticator.authenticate(this, biometricAuthenticatorCallback)
+    }
+
+    private fun dataDecryption(password: String) {
         if (!manager.checkDataFile()) {
             // Likely first time starting app
             // setup app master password
@@ -74,6 +118,7 @@ class SecurityActivity : AppCompatActivity() {
             val inputStream = contentResolver.openInputStream(importingData!!)
             if (manager.loadData(inputStream, password, false)) {
                 Toast.makeText(this, resources.getString(R.string.toast_import_data_success), Toast.LENGTH_SHORT).show()
+                manager.saveData()
             } else {
                 Toast.makeText(this, resources.getString(R.string.toast_import_data_failure), Toast.LENGTH_SHORT).show()
             }
@@ -81,7 +126,7 @@ class SecurityActivity : AppCompatActivity() {
             finish()
         } else {
             if (!manager.loadData(null, password, false)) {
-                Toast.makeText(this, R.string.toast_data_load_failure, Toast.LENGTH_LONG).show()
+                Toast.makeText(this, R.string.toast_invalid_password, Toast.LENGTH_LONG).show()
                 return
             }
             val intent = Intent(this, MainActivity::class.java)

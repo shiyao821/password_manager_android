@@ -4,11 +4,12 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.passwordmanagerv1.adapters.SearchByFieldAdapter
 import com.example.passwordmanagerv1.utils.*
-import java.util.*
 import kotlin.collections.ArrayList
 
 class SearchByFieldActivity : AppCompatActivity() {
@@ -26,18 +27,10 @@ class SearchByFieldActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_by)
 
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+
         accountFieldType = intent.getSerializableExtra(EXTRA_ACCOUNT_FIELD_TYPE) as AccountFieldType
-        results = when (accountFieldType) {
-            AccountFieldType.username -> Manager.getAllUsernames()
-            AccountFieldType.email -> Manager.getAllEmails()
-            AccountFieldType.phone -> Manager.getAllPhoneNumbers()
-            AccountFieldType.password -> Manager.getAllPasswords()
-            AccountFieldType.linkedAccounts -> Manager.getAllLinkedAccounts()
-            else -> {
-                Log.e(TAG, "Error in account field type")
-                mapOf()
-            }
-        }
+        results = searchField()
 
         title = when (accountFieldType) {
             AccountFieldType.username -> resources.getString(R.string.SEARCH_USERNAME).capitalize()
@@ -53,10 +46,6 @@ class SearchByFieldActivity : AppCompatActivity() {
 
         svSearch = findViewById(R.id.svSearch)
         rvSearchResult = findViewById(R.id.rvSearchResult)
-    }
-
-    override fun onStart() {
-        super.onStart()
         adapter = SearchByFieldAdapter(
             this,
             results.keys.toList().sorted(),
@@ -66,8 +55,9 @@ class SearchByFieldActivity : AppCompatActivity() {
                         this@SearchByFieldActivity,
                         SearchByAccountNameActivity::class.java
                     )
-                    val filteredAccountNames = Manager.getAccountNamesFilteredByField(accountFieldType, item) as ArrayList<String>
-                    intent.putStringArrayListExtra(EXTRA_ACCOUNT_NAMES_LIST, filteredAccountNames)
+
+                    intent.putExtra(EXTRA_ACCOUNT_FIELD_TYPE, accountFieldType)
+                    intent.putExtra(EXTRA_ACCOUNT_FIELD_VALUE, item)
                     startActivity(intent)
                 }
             }
@@ -91,8 +81,32 @@ class SearchByFieldActivity : AppCompatActivity() {
         })
     }
 
+    private fun searchField() : Map<String, Int> {
+        return when (accountFieldType) {
+            AccountFieldType.username -> Manager.getAllUsernames()
+            AccountFieldType.email -> Manager.getAllEmails()
+            AccountFieldType.phone -> Manager.getAllPhoneNumbers()
+            AccountFieldType.password -> Manager.getAllPasswords()
+            AccountFieldType.linkedAccounts -> Manager.getAllLinkedAccounts()
+            else -> {
+                Log.e(TAG, "Error in account field type")
+                mapOf()
+            }
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onResume() {
         super.onResume()
         CommonUIBehaviors.focusViewAndShowKeyboard(svSearch, this)
+        results = searchField()
+        adapter.updateData(results.keys.toList().sorted())
     }
 }

@@ -16,6 +16,7 @@ import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 import java.time.Duration
+import java.time.Instant
 import java.time.temporal.TemporalAmount
 import java.util.Base64.getUrlEncoder
 import javax.crypto.SecretKeyFactory
@@ -40,8 +41,10 @@ object Manager {
 
     fun createNewDataFile(passwordInput: String): Boolean {
         Log.i(TAG, "New password set up")
+        masterPassword = passwordInput
         datafile = File(applicationFilePath, DATAFILE_NAME_AND_EXTENSION)
         val textdata = listOf(
+            masterPassword,
             applicationContext.resources.getString(R.string.sampleAccountJson),
             applicationContext.resources.getString(R.string.sampleAccountJson2),
             applicationContext.resources.getString(R.string.sampleAccountJson3),
@@ -64,16 +67,21 @@ object Manager {
         try {
             if (debug && importData == null) {
                 datafile.delete()
+                Log.i(TAG, "Old datafile deleted")
                 createNewDataFile(inputPassword)
             }
-            Log.i(TAG, "$inputPassword|")
             val lines: List<String> = if (importData != null) {
                 val dataAsString = importData.readBytes().decodeToString()
                 importData.close()
                 val decodedString = decryptData(dataAsString, inputPassword)
                 decodedString.split("\n")
             } else {
-                datafile.readLines()
+                val lines = datafile.readLines()
+                if (debug) { Log.i(TAG, "Datafile first line: ${lines[0]}") }
+                if (inputPassword != lines[0]) {
+                    throw TokenValidationException("Password mismatch")
+                }
+                lines.subList(1, lines.size)
             }
             masterPassword = inputPassword // inputPassword is correct at this stage
 
@@ -101,7 +109,7 @@ object Manager {
         val fernetKey = Key(encodedKey)
         val validator = object : StringValidator {
             override fun getTimeToLive(): TemporalAmount {
-                return Duration.ofHours(VALIDATOR_TTL_HOURS)
+                return Duration.ofSeconds(Instant.MAX.epochSecond);
             }
         }
         return token.validateAndDecrypt(fernetKey, validator)
@@ -120,12 +128,11 @@ object Manager {
 
     fun saveData(): Boolean {
         try {
-            var saveString = ""
+            var saveString = masterPassword + "\n"
             for (account in accountList) {
                 saveString += Json.encodeToString(account) + "\n"
                 datafile.writeText(saveString)
             }
-            Log.i(TAG, saveString)
         } catch (err: Exception) {
             Log.e(TAG, err.message.toString())
             return false
@@ -326,5 +333,9 @@ object Manager {
                 account.linkedAccounts.remove(accountName)
             }
         }
+    }
+
+    fun verifyPassword(input: String): Boolean {
+        return masterPassword == input
     }
 }

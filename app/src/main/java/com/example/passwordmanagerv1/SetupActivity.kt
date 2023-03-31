@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
@@ -24,6 +25,8 @@ class SetupActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_setup)
+
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         ettpAppPasswordSetup = findViewById(R.id.ettpAppPasswordSetup)
         ettpAppPasswordSetupConfirmation = findViewById(R.id.ettpAppPasswordSetupConfirmation)
@@ -49,7 +52,14 @@ class SetupActivity : AppCompatActivity() {
                 } else -> false
             }
         }
+    }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun validatePasswordInputs() {
@@ -65,7 +75,8 @@ class SetupActivity : AppCompatActivity() {
         if (Manager.createNewDataFile(passwordInput)) {
             Log.i(TAG, "New password set up")
             AlertDialog.Builder(this)
-                .setTitle(R.string.dialog_new_master_password)
+                .setTitle(R.string.alert_title_master_password_created)
+                .setMessage(R.string.alert_message_master_password_created)
                 .setPositiveButton(R.string.button_acknowledge){ _, _ ->
                     val resultData = Intent()
                     setResult(Activity.RESULT_OK, resultData)

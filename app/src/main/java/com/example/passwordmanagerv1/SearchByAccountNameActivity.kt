@@ -1,15 +1,20 @@
 package com.example.passwordmanagerv1
 
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.MenuItem
 import android.widget.SearchView
 import android.widget.SearchView.OnQueryTextListener
+import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.biometric.BiometricPrompt
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.passwordmanagerv1.utils.CommonUIBehaviors
-import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT_NAME
-import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT_NAMES_LIST
+import com.example.passwordmanagerv1.adapters.SearchByAccountNameAdapter
+import com.example.passwordmanagerv1.utils.*
 
 class SearchByAccountNameActivity : AppCompatActivity() {
 
@@ -17,34 +22,59 @@ class SearchByAccountNameActivity : AppCompatActivity() {
     private lateinit var rvSearchResult: RecyclerView
     private lateinit var adapter: SearchByAccountNameAdapter
     private lateinit var searchResults: List<String>
+    private var accountFieldType: AccountFieldType? = null
+    private var accountFieldValue: String? = null
+    companion object {
+        const val TAG = "clg:SearchByName"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_by)
 
-        val listStringExtra = intent.getStringArrayListExtra(EXTRA_ACCOUNT_NAMES_LIST)
-        if (listStringExtra != null) {
-            // temp solution to filtered results not updating after filtered account is edited
-            title = resources.getString(R.string.activity_label_filtered_results)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+
+        accountFieldType = intent.getSerializableExtra(EXTRA_ACCOUNT_FIELD_TYPE) as AccountFieldType?
+        accountFieldValue = intent.getStringExtra(EXTRA_ACCOUNT_FIELD_VALUE)
+        if (accountFieldType != null && accountFieldValue != null) {
+            title = resources.getString(R.string.activity_label_filtered_results_prefix) +
+                    " " + accountFieldValue
         }
+        searchResults = searchAccountNames()
         svSearch = findViewById(R.id.svSearch)
         rvSearchResult = findViewById(R.id.rvSearchResult)
-    }
 
-    override fun onStart() {
-        super.onStart()
-        searchResults = Manager.getAllAccountNames()
         adapter = SearchByAccountNameAdapter(
             this,
             searchResults,
             object : SearchByAccountNameAdapter.OnItemClickListener {
+                @RequiresApi(Build.VERSION_CODES.R)
                 override fun onItemClick(accountName: String) {
-                    val intent = Intent(
-                        this@SearchByAccountNameActivity,
-                        AccountDetailsActivity::class.java
-                    )
-                    intent.putExtra(EXTRA_ACCOUNT_NAME, accountName)
-                    startActivity(intent)
+
+                    val biometricAuthenticatorCallback = object : BiometricPrompt.AuthenticationCallback() {
+                        override fun onAuthenticationError(errorCode: Int,
+                                                           errString: CharSequence) {
+                            super.onAuthenticationError(errorCode, errString)
+                            Log.e(AccountDetailsActivity.TAG, "Authentication error: $errString, $errorCode")
+                        }
+
+                        override fun onAuthenticationSucceeded(
+                            result: BiometricPrompt.AuthenticationResult) {
+                            super.onAuthenticationSucceeded(result)
+
+                            val intent = Intent(
+                                this@SearchByAccountNameActivity,
+                                AccountDetailsActivity::class.java
+                            ).putExtra(EXTRA_ACCOUNT_NAME, accountName)
+                            startActivity(intent)
+                        }
+
+                        override fun onAuthenticationFailed() {
+                            super.onAuthenticationFailed()
+                            Log.i(AccountDetailsActivity.TAG, "biometrics failed")
+                        }
+                    }
+                    Authenticator.authenticate(this@SearchByAccountNameActivity, biometricAuthenticatorCallback)
                 }
             }
         )
@@ -67,8 +97,25 @@ class SearchByAccountNameActivity : AppCompatActivity() {
         })
     }
 
+    private fun searchAccountNames() : List<String> {
+        if (accountFieldValue != null && accountFieldType != null) {
+            return Manager.getAccountNamesFilteredByField(accountFieldType!!, accountFieldValue!!)
+        }
+        return Manager.getAllAccountNames()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onResume() {
         super.onResume()
         CommonUIBehaviors.focusViewAndShowKeyboard(svSearch, this)
+        searchResults = searchAccountNames()
+        adapter.updateData(searchResults)
     }
 }
