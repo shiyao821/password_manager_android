@@ -24,6 +24,7 @@
     <string name="toast_back_press_again_log_out">Press back again to save and log out</string>
     <string name="toast_copy_suffix">copied to clipboard</string>
 
+    <string name="dialog_new_master_password">A new data file and corresponding master password has been created</string>
     <string name="dialog_edit_account_name_title">Edit Account Name</string>
     <string name="dialog_edit_username_title">Edit Username</string>
     <string name="dialog_edit_email_title">Edit Email</string>
@@ -108,4 +109,7 @@
     <string name="toast_reminder_biometrics_setup">Please setup biometric authentication on your phone for greater security</string>
     <string name="alert_title_biometric_setup">Biometric verification setup</string>
     <string name="alert_message_biometric_setup">This app needs your phone\'s biometrics for security. You will now be redirected to set it up.</string>
+    <string name="button_delete_account">Delete Account</string>
+    <string name="alert_title_account_delete_confirmation">Are you sure you want to delete this account?</string>
+    <string name="alert_message_account_delete_confirmation">Account cannot be recovered. All other accounts will lose their link to this account. </string>
 </resources>

@@ -20,4 +20,5 @@
     <dimen name="margin_start_icons">16dp</dimen>
     <dimen name="scrollable_bottom_padding">16dp</dimen>
     <dimen name="text_size_message">16sp</dimen>
+    <dimen name="button_height">25dp</dimen>
 </resources>

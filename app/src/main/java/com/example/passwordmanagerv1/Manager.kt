@@ -325,6 +325,16 @@ object Manager {
         return accountList.map { it.linkedAccounts }.flatten().groupingBy { it }.eachCount()
     }
 
+    fun deleteAccount(accountName: String) {
+        accountList.remove(this.getAccount(accountName))
+        // Remove all other accounts with reference to this account in Linked Accounts
+        for (account in accountList) {
+            if (account.linkedAccounts.contains(accountName)) {
+                account.linkedAccounts.remove(accountName)
+            }
+        }
+    }
+
     fun verifyPassword(input: String): Boolean {
         return masterPassword == input
     }
