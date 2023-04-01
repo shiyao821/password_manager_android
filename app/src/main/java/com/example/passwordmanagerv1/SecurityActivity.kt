@@ -3,7 +3,6 @@ package com.example.passwordmanagerv1
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.inputmethod.EditorInfo
@@ -11,7 +10,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
 import com.example.passwordmanagerv1.utils.CommonUIBehaviors
@@ -34,7 +32,6 @@ class SecurityActivity : AppCompatActivity() {
         private const val SETUP_PASSWORD_CODE = 1
     }
 
-    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_security)
@@ -70,7 +67,6 @@ class SecurityActivity : AppCompatActivity() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.R)
     private fun login(password: String) {
         if (isVerificationOnly) {
             Log.i(TAG, "verifying password")

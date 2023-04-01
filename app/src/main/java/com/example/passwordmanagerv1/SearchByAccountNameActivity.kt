@@ -1,15 +1,12 @@
 package com.example.passwordmanagerv1
 
 import android.content.Intent
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.widget.SearchView
 import android.widget.SearchView.OnQueryTextListener
-import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.biometric.BiometricPrompt
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -48,7 +45,6 @@ class SearchByAccountNameActivity : AppCompatActivity() {
             this,
             searchResults,
             object : SearchByAccountNameAdapter.OnItemClickListener {
-                @RequiresApi(Build.VERSION_CODES.R)
                 override fun onItemClick(accountName: String) {
 
                     val biometricAuthenticatorCallback = object : BiometricPrompt.AuthenticationCallback() {

@@ -1,9 +1,7 @@
 package com.example.passwordmanagerv1
 
 import android.content.Context
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import com.example.passwordmanagerv1.utils.*
 import com.macasaet.fernet.Key
 import com.macasaet.fernet.StringValidator
@@ -62,7 +60,6 @@ object Manager {
         return datafile.exists()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun loadData(importData: InputStream? = null, inputPassword: String, debug: Boolean = false): Boolean {
         try {
             if (debug && importData == null) {
@@ -102,20 +99,18 @@ object Manager {
         return true
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun decryptData(encryptedData: String, inputPassword: String): String {
         val token = Token.fromString(encryptedData)
         val encodedKey = deriveKey(inputPassword)
         val fernetKey = Key(encodedKey)
         val validator = object : StringValidator {
             override fun getTimeToLive(): TemporalAmount {
-                return Duration.ofSeconds(Instant.MAX.epochSecond);
+                return Duration.ofSeconds(Instant.MAX.epochSecond)
             }
         }
         return token.validateAndDecrypt(fernetKey, validator)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun deriveKey(inputPassword: String): String? {
         val salt = KEY_SALT.toByteArray()
         val derivedKeyLength = DERIVED_KEY_LENGTH
@@ -141,7 +136,6 @@ object Manager {
         return true
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun encryptData(plainData: String): String {
         val key = deriveKey(masterPassword)
         val fernetKey = Key(key)
@@ -149,7 +143,6 @@ object Manager {
         return token.serialise() // the Base64url encoded token
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun exportData(outputStream: OutputStream) : Boolean{
         try {
             saveData()

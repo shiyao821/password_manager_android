@@ -7,7 +7,6 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.DocumentsContract
 import android.provider.MediaStore
@@ -91,8 +90,6 @@ class ImportExportActivity : AppCompatActivity() {
         }
     }
 
-
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
             onBackPressed()
@@ -133,14 +130,7 @@ class ImportExportActivity : AppCompatActivity() {
 
     private fun launchIntentForFileExport() {
         Log.i(TAG, "Starting file export")
-        val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            // Doesn't work
-            MediaStore.VOLUME_EXTERNAL_PRIMARY.toUri()
-        } else {
-            // Doesn't work
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        }
-
+        val uri = MediaStore.VOLUME_EXTERNAL_PRIMARY.toUri()
         createFile(uri)
     }
 
@@ -152,9 +142,7 @@ class ImportExportActivity : AppCompatActivity() {
 
             // Optionally, specify a URI for the directory that should be opened in
             // the system file picker before your app creates the document.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri)
-            }
+            putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri)
         }
         startActivityForResult(intent, INTENT_REQUEST_CREATE_FILE)
     }
