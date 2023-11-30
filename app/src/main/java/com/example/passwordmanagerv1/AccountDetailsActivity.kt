@@ -92,6 +92,8 @@ class AccountDetailsActivity : AppCompatActivity() {
         tvPhoneValue.text = account.phone
         val tvPasswordValue = findViewById<TextView>(R.id.tvPasswordValue)
         tvPasswordValue.text = account.password
+        val tvlastEditedValue = findViewById<TextView>(R.id.tvLastEditedValue)
+        tvlastEditedValue.text = account.lastEdited.toString().split('T').joinToString(" ")
 
         // linked accounts uses horizontal scrollable linear layout RecyclerView
         val rvLinkedAccounts = findViewById<RecyclerView>(R.id.rvEditLinkedAccounts)

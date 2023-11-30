@@ -7,6 +7,9 @@ import com.macasaet.fernet.Key
 import com.macasaet.fernet.StringValidator
 import com.macasaet.fernet.Token
 import com.macasaet.fernet.TokenValidationException
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -179,6 +182,7 @@ object Manager {
             "",
             mutableListOf(),
             mutableMapOf(),
+            Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         )
         accountList.add(newAccount)
         return saveData()
