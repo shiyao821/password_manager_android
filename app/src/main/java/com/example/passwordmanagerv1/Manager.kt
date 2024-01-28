@@ -84,13 +84,26 @@ object Manager {
                 lines.subList(1, lines.size)
             }
 
-            accountList = mutableListOf()
             Log.i(TAG, "num lines ${lines.size}")
+            if (!this::accountList.isInitialized) accountList = mutableListOf()
+            Log.i(TAG, "Account List: ${accountList.size}")
+            val newAccountList = mutableListOf<Account>()
+            var numAccountsUpdated: Int = 0
             for (line in lines) {
-                if (line.isNotEmpty()) {
-                    accountList.add(Json.decodeFromString(line))
+                if (line.isEmpty()) continue
+
+                // compare lastEdited for all accounts and take latest
+                val newAccount: Account = Json.decodeFromString(line)
+                val localAccount = accountList.find { localAccount -> newAccount.accountName == localAccount.accountName }
+                if (localAccount === null || newAccount.lastEdited > localAccount.lastEdited) {
+                    newAccountList.add(newAccount)
+                    numAccountsUpdated++
+                } else {
+                    newAccountList.add(localAccount)
                 }
             }
+            accountList = newAccountList
+            Log.i(TAG, "num accounts added/updated: $numAccountsUpdated")
 
             masterPassword = inputPassword // set as new masterPassword only after successful decoding
 
@@ -225,6 +238,7 @@ object Manager {
                 Log.e(TAG, "Editing $accountFieldTypeToEdit not implemented")
             }
         }
+        account.lastEdited = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         return saveData()
     }
 
@@ -236,6 +250,7 @@ object Manager {
         if (requestedAccountName in accountToEdit.linkedAccounts) return false
         // edit
         accountToEdit.linkedAccounts.add(requestedAccountName)
+        accountToEdit.lastEdited = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         return saveData()
     }
 
@@ -250,6 +265,7 @@ object Manager {
         if (requestedAccountName !in accountToEdit.linkedAccounts) return false
         // edit
         accountToEdit.linkedAccounts.remove(requestedAccountName)
+        accountToEdit.lastEdited = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         return saveData()
     }
 
@@ -271,6 +287,7 @@ object Manager {
             account.misc.remove(prevMiscTitle)
             account.misc[newMiscTitle] = miscValue
         }
+        account.lastEdited = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         return saveData()
     }
 
