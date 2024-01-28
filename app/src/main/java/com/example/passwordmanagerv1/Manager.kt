@@ -83,7 +83,6 @@ object Manager {
                 }
                 lines.subList(1, lines.size)
             }
-            masterPassword = inputPassword // inputPassword is correct at this stage
 
             accountList = mutableListOf()
             Log.i(TAG, "num lines ${lines.size}")
@@ -92,6 +91,9 @@ object Manager {
                     accountList.add(Json.decodeFromString(line))
                 }
             }
+
+            masterPassword = inputPassword // set as new masterPassword only after successful decoding
+
         } catch (_: TokenValidationException) {
             Log.i(TAG, "Invalid Password")
             return false
