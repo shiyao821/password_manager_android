@@ -47,22 +47,10 @@ class ImportExportActivity : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         btnImportData.setOnClickListener {
-            if (isPermissionGranted(this@ImportExportActivity, READ_EXTERNAL_STORAGE)) {
-                verifyIdentityForImport()
-            } else {
-                Log.i(TAG, "Requesting Permission")
-                requestPermission(this@ImportExportActivity,
-                    READ_EXTERNAL_STORAGE, PERMISSION_REQUEST_READ_EXTERNAL_STORAGE)
-            }
+            verifyIdentityForImport()
         }
         btnExportData.setOnClickListener {
-            if (isPermissionGranted(this@ImportExportActivity, WRITE_EXTERNAL_STORAGE)) {
-                verifyIdentityForExport()
-            } else {
-                Log.i(TAG, "Requesting Permission")
-                requestPermission(this@ImportExportActivity,
-                    WRITE_EXTERNAL_STORAGE, PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE)
-            }
+            verifyIdentityForExport()
         }
         verificationLauncherForImport = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -104,18 +92,7 @@ class ImportExportActivity : AppCompatActivity() {
         intent.type = "*/*"
         intent.addCategory(Intent.CATEGORY_OPENABLE)
 
-        // special intent for Samsung file manager
-        val sIntent = Intent("com.sec.android.app.myfiles.PICK_DATA")
-        sIntent.addCategory(Intent.CATEGORY_DEFAULT)
-
-        val chooserIntent: Intent
-        if (packageManager.resolveActivity(sIntent, 0) != null) {
-            // it is device with Samsung file manager
-            chooserIntent = Intent.createChooser(sIntent, "Open file")
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(intent))
-        } else {
-            chooserIntent = Intent.createChooser(intent, "Open file")
-        }
+        val chooserIntent: Intent = Intent.createChooser(intent, "Open file")
 
         try {
             startActivityForResult(chooserIntent, INTENT_REQUEST_CHOOSE_FILE)
@@ -147,28 +124,6 @@ class ImportExportActivity : AppCompatActivity() {
         startActivityForResult(intent, INTENT_REQUEST_CREATE_FILE)
     }
 
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            when (requestCode) {
-                PERMISSION_REQUEST_READ_EXTERNAL_STORAGE -> verifyIdentityForImport()
-                PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE -> verifyIdentityForExport()
-                else -> {}
-            }
-        } else {
-            Log.w(TAG, "$requestCode, ${permissions[0]}, ${grantResults[0]}")
-            AlertDialog.Builder(this)
-                .setTitle(R.string.alert_title_permission_denied)
-                .setMessage(R.string.alert_message_external_storage_permissions_needed)
-                .setPositiveButton(R.string.button_acknowledge) { _,_ -> }
-                .show()
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
