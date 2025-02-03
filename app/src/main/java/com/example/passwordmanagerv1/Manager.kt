@@ -87,22 +87,23 @@ object Manager {
             Log.i(TAG, "num lines ${lines.size}")
             if (!this::accountList.isInitialized) accountList = mutableListOf()
             Log.i(TAG, "Account List: ${accountList.size}")
-            val newAccountList = mutableListOf<Account>()
-            var numAccountsUpdated: Int = 0
+            var numAccountsUpdated = 0
+            var numAccountsAdded = 0
             for (line in lines) {
                 if (line.isEmpty()) continue
 
                 // compare lastEdited for all accounts and take latest
                 val newAccount: Account = Json.decodeFromString(line)
                 val localAccount = accountList.find { localAccount -> newAccount.accountName == localAccount.accountName }
-                if (localAccount === null || newAccount.lastEdited > localAccount.lastEdited) {
-                    newAccountList.add(newAccount)
+                if (localAccount === null) {
+                    numAccountsAdded++
+                    accountList.add(newAccount)
+                } else if (newAccount.lastEdited > localAccount.lastEdited) {
                     numAccountsUpdated++
-                } else {
-                    newAccountList.add(localAccount)
+                    accountList.remove(localAccount)
+                    accountList.add(newAccount)
                 }
             }
-            accountList = newAccountList
             Log.i(TAG, "num accounts added/updated: $numAccountsUpdated")
 
             masterPassword = inputPassword // set as new masterPassword only after successful decoding
