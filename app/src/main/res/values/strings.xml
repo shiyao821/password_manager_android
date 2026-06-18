@@ -93,11 +93,11 @@
     <string name="error">Error</string>
     <string name="activity_label_filtered_results">Filtered Results</string>
     <string name="IMPORT_EXPORT_DATA">Import / export data</string>
-    <string name="message_import_data_warning">Warning: Import wipes all existing data and replaces it wholesale with the contents of the chosen file.</string>
+    <string name="message_import_data_warning">Warning: Import wipes all existing data and replaces it wholesale with the contents of the chosen file. Note that the chosen file\'s master password will replace the current one.</string>
     <string name="button_import_data">Import Data</string>
     <string name="message_export_prompt">Export data to a file saved on your phone as a backup. This file can be imported by the app.</string>
     <string name="button_export_data">Export Data</string>
-    <string name="message_update_data">Update merges the chosen file into your existing data, keeping the most recently edited version of each account. Nothing is deleted.</string>
+    <string name="message_update_data">Update merges the chosen file into your existing data, keeping the most recently edited version of each account. Nothing is deleted. The current master password will be kept as is after the update.</string>
     <string name="button_update_data">Update Data</string>
     <string name="toast_update_data_success">Data successfully updated</string>
     <string name="toast_update_data_failure">Data update failed</string>

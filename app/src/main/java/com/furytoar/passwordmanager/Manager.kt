@@ -105,7 +105,20 @@ object Manager {
             val mergeResult = AccountMerger.merge(accountList, lines)
             Log.i(TAG, "num accounts added/updated: ${mergeResult.added}/${mergeResult.updated}")
 
-            masterPassword = inputPassword // set as new masterPassword only after successful decoding
+            // Decide which master password the vault is now encrypted under:
+            when {
+                // Local login: this password unlocks the vault (salt was set in decodeLocalFile).
+                importData == null -> masterPassword = inputPassword
+                // Import (wipe): the imported file's password takes over; re-key with a fresh
+                // salt on the next save.
+                wipeExisting -> {
+                    masterPassword = inputPassword
+                    salt = null
+                    invalidateKeyCache()
+                }
+                // Update (merge): leave the current master password and salt untouched, so the
+                // merged vault is re-saved under the existing credentials.
+            }
 
         } catch (_: TokenValidationException) {
             Log.i(TAG, "Invalid Password")
@@ -137,17 +150,20 @@ object Manager {
     }
 
     /**
-     * Decrypts an imported data file. Handles the current Argon2id format (magic header) and
-     * the legacy PBKDF2 Fernet format (raw token, no header). Importing legacy data sets
-     * [importedLegacyFormat] and clears the salt so the vault is re-saved in the new format.
+     * Decrypts an imported data file with [inputPassword] (the *file's* password). Handles the
+     * current Argon2id format (magic header) and the legacy PBKDF2 Fernet format (raw token, no
+     * header). This is self-contained: it does NOT touch the local vault's salt/key cache, so a
+     * merge ("Update") leaves the current master password intact. Whether the imported file's
+     * password takes over is decided by [loadData] based on the wipe/merge mode.
      */
     private fun decryptImportedData(bytes: ByteArray, inputPassword: String): String {
         if (VaultCrypto.hasMagicHeader(bytes)) {
-            return decryptNewFormat(bytes, inputPassword)
+            val fileSalt = VaultCrypto.saltOf(bytes)
+            return VaultCrypto.decryptNewFormat(
+                bytes, VaultCrypto.deriveKeyArgon2(inputPassword, fileSalt)
+            )
         }
         importedLegacyFormat = true
-        salt = null
-        invalidateKeyCache()
         return VaultCrypto.decryptLegacyFernet(
             bytes.decodeToString(), VaultCrypto.deriveKeyLegacy(inputPassword)
         )
