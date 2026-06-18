@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.passwordmanagerv1'
+    namespace 'com.furytoar.passwordmanager'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.passwordmanagerv1"
+        applicationId "com.furytoar.passwordmanager"
         minSdk 30
         targetSdk 33
         versionCode 1
@@ -30,6 +30,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+    buildFeatures {
+        viewBinding true
     }
 }
 

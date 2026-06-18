@@ -1,0 +1,16 @@
+package com.furytoar.passwordmanager
+
+import kotlinx.datetime.LocalDateTime
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class Account (
+    var accountName: String,
+    var username: String,
+    var email: String,
+    var phone: String,
+    var password: String,
+    var linkedAccounts: MutableList<String>,
+    var misc: MutableMap<String, String>,
+    var lastEdited: LocalDateTime,
+)

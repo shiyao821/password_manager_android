@@ -1,0 +1,115 @@
+package com.furytoar.passwordmanager
+
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.util.Log
+import android.view.MenuItem
+import android.widget.SearchView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.furytoar.passwordmanager.adapters.SearchByFieldAdapter
+import com.furytoar.passwordmanager.databinding.ActivitySearchByBinding
+import com.furytoar.passwordmanager.utils.*
+
+class SearchByFieldActivity : AppCompatActivity() {
+    private lateinit var binding: ActivitySearchByBinding
+    private lateinit var accountFieldType: AccountFieldType
+    private lateinit var svSearch: SearchView
+    private lateinit var rvSearchResult: RecyclerView
+    private lateinit var adapter: SearchByFieldAdapter
+    private lateinit var results: Map<String, Int>
+
+    companion object {
+        const val TAG = "clg:SearchByField"
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivitySearchByBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        CommonUIBehaviors.applySecureFlag(this)
+
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+
+        accountFieldType = intent.serializableExtraCompat<AccountFieldType>(EXTRA_ACCOUNT_FIELD_TYPE)!!
+        results = searchField()
+
+        title = when (accountFieldType) {
+            AccountFieldType.username -> resources.getString(R.string.SEARCH_USERNAME).titleCase()
+            AccountFieldType.email -> resources.getString(R.string.SEARCH_EMAIL).titleCase()
+            AccountFieldType.phone -> resources.getString(R.string.SEARCH_PHONE).titleCase()
+            AccountFieldType.password -> resources.getString(R.string.SEARCH_PASSWORD).titleCase()
+            AccountFieldType.linkedAccounts -> resources.getString(R.string.SEARCH_LINKED_ACCOUNT).titleCase()
+            else -> {
+                Log.e(TAG, "Error in account field type")
+                resources.getString(R.string.error)
+            }
+        }
+
+        svSearch = binding.svSearch
+        rvSearchResult = binding.rvSearchResult
+        adapter = SearchByFieldAdapter(
+            this,
+            results.keys.toList().sorted(),
+            object : SearchByFieldAdapter.OnItemClickListener {
+                override fun onItemClick(item: String) {
+                    val intent = Intent(
+                        this@SearchByFieldActivity,
+                        SearchByAccountNameActivity::class.java
+                    )
+
+                    intent.putExtra(EXTRA_ACCOUNT_FIELD_TYPE, accountFieldType)
+                    intent.putExtra(EXTRA_ACCOUNT_FIELD_VALUE, item)
+                    startActivity(intent)
+                }
+            }
+        )
+        rvSearchResult.adapter = adapter
+        rvSearchResult.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+
+        svSearch.isIconifiedByDefault = false
+        svSearch.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(p0: String?): Boolean {
+                onQueryTextChange(p0)
+                return true
+            }
+
+            override fun onQueryTextChange(p0: String?): Boolean {
+                if (p0 != null) {
+                    adapter.filter(p0)
+                }
+                return true
+            }
+        })
+    }
+
+    private fun searchField() : Map<String, Int> {
+        return when (accountFieldType) {
+            AccountFieldType.username -> Manager.getAllUsernames()
+            AccountFieldType.email -> Manager.getAllEmails()
+            AccountFieldType.phone -> Manager.getAllPhoneNumbers()
+            AccountFieldType.password -> Manager.getAllPasswords()
+            AccountFieldType.linkedAccounts -> Manager.getAllLinkedAccounts()
+            else -> {
+                Log.e(TAG, "Error in account field type")
+                mapOf()
+            }
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressedDispatcher.onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        CommonUIBehaviors.focusViewAndShowKeyboard(svSearch, this)
+        results = searchField()
+        adapter.updateData(results.keys.toList().sorted())
+    }
+}
