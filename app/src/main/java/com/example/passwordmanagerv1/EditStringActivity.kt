@@ -2,6 +2,7 @@ package com.example.passwordmanagerv1
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.InputType
 import android.view.MenuItem
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
@@ -12,6 +13,7 @@ import com.example.passwordmanagerv1.utils.AccountFieldType
 import com.example.passwordmanagerv1.utils.CommonUIBehaviors
 import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT_NAME
 import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT_FIELD_TYPE
+import com.example.passwordmanagerv1.utils.serializableExtraCompat
 
 class EditStringActivity : AppCompatActivity() {
 
@@ -30,7 +32,7 @@ class EditStringActivity : AppCompatActivity() {
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         accountName = intent.getStringExtra(EXTRA_ACCOUNT_NAME)!!
-        accountFieldTypeToEdit = intent.getSerializableExtra(EXTRA_ACCOUNT_FIELD_TYPE) as AccountFieldType
+        accountFieldTypeToEdit = intent.serializableExtraCompat<AccountFieldType>(EXTRA_ACCOUNT_FIELD_TYPE)!!
 
         title = resources.getString(R.string.activity_label_edit_entry_prefix) + " " +
                 when (accountFieldTypeToEdit) {
@@ -43,6 +45,13 @@ class EditStringActivity : AppCompatActivity() {
                 } + " for $accountName"
 
         etNewValue = findViewById(R.id.etNewValue)
+        // For passwords, use a visible-password input type so the soft keyboard does not
+        // store the value in its suggestion dictionary (the field stays readable on screen).
+        if (accountFieldTypeToEdit == AccountFieldType.password) {
+            etNewValue.inputType =
+                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            etNewValue.imeOptions = EditorInfo.IME_ACTION_DONE
+        }
         val tvPreviousValue = findViewById<TextView>(R.id.tvPreviousValue)
         val btnSubmit = findViewById<Button>(R.id.btnSubmit)
 
@@ -61,7 +70,7 @@ class EditStringActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
-            onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
             return true
         }
         return super.onOptionsItemSelected(item)

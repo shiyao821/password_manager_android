@@ -2,7 +2,6 @@ package com.example.passwordmanagerv1
 
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
-import java.io.Serializable as SerializableClass
 
 @Serializable
 data class Account (
@@ -14,4 +13,4 @@ data class Account (
     var linkedAccounts: MutableList<String>,
     var misc: MutableMap<String, String>,
     var lastEdited: LocalDateTime,
- ) : SerializableClass // can optimize to Parcelable
+)

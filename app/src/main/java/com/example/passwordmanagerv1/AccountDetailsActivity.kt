@@ -75,7 +75,7 @@ class AccountDetailsActivity : AppCompatActivity() {
                     .show()
             }
             android.R.id.home -> {
-                onBackPressed()
+                onBackPressedDispatcher.onBackPressed()
             }
             else -> {}
         }

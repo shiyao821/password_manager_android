@@ -32,7 +32,7 @@ class SearchByAccountNameActivity : AppCompatActivity() {
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        accountFieldType = intent.getSerializableExtra(EXTRA_ACCOUNT_FIELD_TYPE) as AccountFieldType?
+        accountFieldType = intent.serializableExtraCompat<AccountFieldType>(EXTRA_ACCOUNT_FIELD_TYPE)
         accountFieldValue = intent.getStringExtra(EXTRA_ACCOUNT_FIELD_VALUE)
         if (accountFieldType != null && accountFieldValue != null) {
             title = resources.getString(R.string.activity_label_filtered_results_prefix) +
@@ -103,7 +103,7 @@ class SearchByAccountNameActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
-            onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
             return true
         }
         return super.onOptionsItemSelected(item)

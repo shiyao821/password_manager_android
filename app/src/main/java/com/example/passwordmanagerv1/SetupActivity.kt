@@ -58,7 +58,7 @@ class SetupActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
-            onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
             return true
         }
         return super.onOptionsItemSelected(item)
@@ -76,17 +76,30 @@ class SetupActivity : AppCompatActivity() {
             return
         }
 
-        if (Manager.createNewDataFile(passwordInput)) {
-            Log.i(TAG, "New password set up")
-            AlertDialog.Builder(this)
-                .setTitle(R.string.alert_title_master_password_created)
-                .setMessage(R.string.alert_message_master_password_created)
-                .setPositiveButton(R.string.button_acknowledge){ _, _ ->
-                    val resultData = Intent()
-                    setResult(Activity.RESULT_OK, resultData)
-                    finish()
-            }.show()
-        }
+        // Creating the vault derives the Argon2id key, which is expensive: run it off the UI
+        // thread to avoid an ANR.
+        val originalButtonText = btnSetup.text
+        btnSetup.isEnabled = false
+        btnSetup.text = getString(R.string.status_working)
+        Thread {
+            val created = Manager.createNewDataFile(passwordInput)
+            runOnUiThread {
+                if (created) {
+                    Log.i(TAG, "New password set up")
+                    AlertDialog.Builder(this)
+                        .setTitle(R.string.alert_title_master_password_created)
+                        .setMessage(R.string.alert_message_master_password_created)
+                        .setPositiveButton(R.string.button_acknowledge) { _, _ ->
+                            setResult(Activity.RESULT_OK, Intent())
+                            finish()
+                        }.show()
+                } else {
+                    btnSetup.isEnabled = true
+                    btnSetup.text = originalButtonText
+                    Toast.makeText(this, R.string.toast_error, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }.start()
     }
 
     private fun isValidPassword(password: String): Boolean {

@@ -30,15 +30,15 @@ class SearchByFieldActivity : AppCompatActivity() {
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        accountFieldType = intent.getSerializableExtra(EXTRA_ACCOUNT_FIELD_TYPE) as AccountFieldType
+        accountFieldType = intent.serializableExtraCompat<AccountFieldType>(EXTRA_ACCOUNT_FIELD_TYPE)!!
         results = searchField()
 
         title = when (accountFieldType) {
-            AccountFieldType.username -> resources.getString(R.string.SEARCH_USERNAME).capitalize()
-            AccountFieldType.email -> resources.getString(R.string.SEARCH_EMAIL).capitalize()
-            AccountFieldType.phone -> resources.getString(R.string.SEARCH_PHONE).capitalize()
-            AccountFieldType.password -> resources.getString(R.string.SEARCH_PASSWORD).capitalize()
-            AccountFieldType.linkedAccounts -> resources.getString(R.string.SEARCH_LINKED_ACCOUNT).capitalize()
+            AccountFieldType.username -> resources.getString(R.string.SEARCH_USERNAME).titleCase()
+            AccountFieldType.email -> resources.getString(R.string.SEARCH_EMAIL).titleCase()
+            AccountFieldType.phone -> resources.getString(R.string.SEARCH_PHONE).titleCase()
+            AccountFieldType.password -> resources.getString(R.string.SEARCH_PASSWORD).titleCase()
+            AccountFieldType.linkedAccounts -> resources.getString(R.string.SEARCH_LINKED_ACCOUNT).titleCase()
             else -> {
                 Log.e(TAG, "Error in account field type")
                 resources.getString(R.string.error)
@@ -98,7 +98,7 @@ class SearchByFieldActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
-            onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
             return true
         }
         return super.onOptionsItemSelected(item)

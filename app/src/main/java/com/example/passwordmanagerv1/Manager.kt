@@ -460,4 +460,12 @@ object Manager {
     fun verifyPassword(input: String): Boolean {
         return masterPassword == input
     }
+
+    /**
+     * True when the most recent load came from a legacy source (plaintext local file or legacy
+     * Fernet import), meaning no current-format salt/key is cached yet. Callers should trigger a
+     * [saveData] on a background thread after login to migrate the file and warm the key cache,
+     * so later edits never run the Argon2id KDF on the UI thread.
+     */
+    fun loadedFromLegacyStorage(): Boolean = salt == null
 }

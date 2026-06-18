@@ -74,7 +74,7 @@ class EditMiscActivity : AppCompatActivity() {
                     .show()
             }
             android.R.id.home -> {
-                onBackPressed()
+                onBackPressedDispatcher.onBackPressed()
                 return true
             }
             else -> {}

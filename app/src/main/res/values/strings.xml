@@ -9,6 +9,8 @@
     <string name="button_acknowledge">OK</string>
     <string name="button_cancel">CANCEL</string>
     <string name="button_confirm">CONFIRM</string>
+    <string name="button_unlocking">UNLOCKING…</string>
+    <string name="status_working">Please wait…</string>
 
     <string name="hint_search">Type here to search</string>
     <string name="hint_new_value">Enter new value here</string>

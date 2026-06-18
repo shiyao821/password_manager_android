@@ -1,11 +1,8 @@
 package com.example.passwordmanagerv1
 
-import android.Manifest.permission.READ_EXTERNAL_STORAGE
-import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.DocumentsContract
@@ -25,8 +22,6 @@ import com.example.passwordmanagerv1.utils.*
 class ImportExportActivity : AppCompatActivity() {
 
     companion object {
-        const val PERMISSION_REQUEST_READ_EXTERNAL_STORAGE = 20
-        const val PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 30
         const val INTENT_REQUEST_CHOOSE_FILE = 40
         const val INTENT_REQUEST_CREATE_FILE = 50
         const val TAG = "clg:ImportExport"
@@ -36,6 +31,7 @@ class ImportExportActivity : AppCompatActivity() {
     private lateinit var btnExportData: Button
     private lateinit var verificationLauncherForImport: ActivityResultLauncher<Intent>
     private lateinit var verificationLauncherForExport: ActivityResultLauncher<Intent>
+    private lateinit var importDecryptionLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,6 +73,11 @@ class ImportExportActivity : AppCompatActivity() {
                 }
             }
         }
+        // Launched for-result (rather than plain startActivity) so SecurityActivity sees a
+        // non-null callingPackage and will honor the import-data extra. Result is unused.
+        importDecryptionLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -161,12 +162,16 @@ class ImportExportActivity : AppCompatActivity() {
             Toast.makeText(this, resources.getString(R.string.toast_export_data_failure), Toast.LENGTH_SHORT).show()
             return
         }
-        if (Manager.exportData(outputStream)) {
-            Toast.makeText(this, resources.getString(R.string.toast_export_data_success), Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(this, resources.getString(R.string.toast_export_data_failure), Toast.LENGTH_SHORT).show()
-        }
-        outputStream.close()
+        // Export encrypts (Argon2id KDF) and writes the file; do it off the UI thread.
+        Thread {
+            val success = Manager.exportData(outputStream)
+            outputStream.close()
+            runOnUiThread {
+                val message = if (success) R.string.toast_export_data_success
+                else R.string.toast_export_data_failure
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            }
+        }.start()
     }
 
     private fun importData(uri: Uri) {
@@ -185,7 +190,7 @@ class ImportExportActivity : AppCompatActivity() {
     private fun launchSecurityActivityForDecryption(uri: Uri) {
         val intent = Intent(this, SecurityActivity::class.java)
         intent.putExtra(EXTRA_IMPORT_DATA_URI, uri)
-        startActivity(intent)
+        importDecryptionLauncher.launch(intent)
     }
 
     private fun verifyIdentityForImport() {

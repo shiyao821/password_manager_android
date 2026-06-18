@@ -62,7 +62,7 @@
         android:digits="@string/password_char_without_space"
         android:ems="10"
         android:hint="Enter new app master password"
-        android:inputType="text"
+        android:inputType="textPassword"
         android:imeOptions="actionNext"
         android:singleLine="true"
         android:minHeight="48dp"

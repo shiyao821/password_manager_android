@@ -1,6 +1,7 @@
 package com.example.passwordmanagerv1
 
 import android.content.Intent
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -72,6 +73,8 @@ class MainActivity : AppCompatActivity() {
             })
         rvMenu.adapter = menuAdapter
         rvMenu.layoutManager = LinearLayoutManager(this)
+
+        onBackPressedDispatcher.addCallback(this, doubleBackToExitCallback)
     }
 
     private fun startSearchByField(accountFieldType: AccountFieldType) {
@@ -116,19 +119,21 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    override fun onBackPressed() {
-        if (hasBackBeenPressed) {
-            finish(); // finish activity
-            super.onBackPressed()
-        } else {
-            Toast.makeText(
-                this, this.resources.getString(R.string.toast_back_press_again_log_out),
-                Toast.LENGTH_SHORT
-            ).show();
-            hasBackBeenPressed = true;
-            Handler(Looper.getMainLooper()).postDelayed({
-                hasBackBeenPressed = false;
-            }, this.resources.getInteger(R.integer.double_back_press_max_interval_ms).toLong());
+    private val doubleBackToExitCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (hasBackBeenPressed) {
+                finish()
+            } else {
+                Toast.makeText(
+                    this@MainActivity,
+                    resources.getString(R.string.toast_back_press_again_log_out),
+                    Toast.LENGTH_SHORT
+                ).show()
+                hasBackBeenPressed = true
+                Handler(Looper.getMainLooper()).postDelayed({
+                    hasBackBeenPressed = false
+                }, resources.getInteger(R.integer.double_back_press_max_interval_ms).toLong())
+            }
         }
     }
 }

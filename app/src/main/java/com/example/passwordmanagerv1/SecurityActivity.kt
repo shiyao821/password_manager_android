@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
+import androidx.core.content.IntentCompat
 import com.example.passwordmanagerv1.utils.CommonUIBehaviors
 import com.example.passwordmanagerv1.utils.EXTRA_IMPORT_DATA_URI
 import com.example.passwordmanagerv1.utils.EXTRA_VERIFICATION
@@ -38,8 +39,14 @@ class SecurityActivity : AppCompatActivity() {
         setContentView(R.layout.activity_security)
         CommonUIBehaviors.applySecureFlag(this)
 
-        importingData = intent.getParcelableExtra(EXTRA_IMPORT_DATA_URI)
-        isVerificationOnly = intent.getBooleanExtra(EXTRA_VERIFICATION, false) == true
+        // This activity is exported (it is the launcher). Only honor the import/verification
+        // extras when we were started from within the app, so another app cannot drive these
+        // flows by sending crafted extras.
+        val launchedInternally = callingPackage == packageName
+        importingData = if (launchedInternally) {
+            IntentCompat.getParcelableExtra(intent, EXTRA_IMPORT_DATA_URI, Uri::class.java)
+        } else null
+        isVerificationOnly = launchedInternally && intent.getBooleanExtra(EXTRA_VERIFICATION, false)
         Log.i(TAG, "is $isVerificationOnly")
 
         btnLogin = findViewById(R.id.btnLogin)
@@ -112,36 +119,76 @@ class SecurityActivity : AppCompatActivity() {
             startActivityForResult(intent, SETUP_PASSWORD_CODE)
             return
         }
+        // Key derivation (Argon2id) and file I/O are expensive and must not run on the UI
+        // thread, or the app will ANR. Do the work on a background thread and update UI on
+        // completion.
+        setLoading(true)
         if (importingData != null) {
+            runImport(password)
+        } else {
+            runLogin(password)
+        }
+    }
+
+    private fun runImport(password: String) {
+        Thread {
             val inputStream = contentResolver.openInputStream(importingData!!)
-            if (manager.loadData(inputStream, password)) {
+            val success = manager.loadData(inputStream, password)
+            if (success) {
                 manager.saveData() // persist merged data in the current encrypted format
-                if (manager.importedLegacyFormat) {
-                    inputStream?.close()
-                    AlertDialog.Builder(this)
-                        .setTitle(R.string.alert_title_legacy_import)
-                        .setMessage(R.string.alert_message_legacy_import)
-                        .setPositiveButton(R.string.button_acknowledge) { _, _ -> finish() }
-                        .setOnDismissListener { finish() }
-                        .show()
-                    return
-                }
-                Toast.makeText(this, resources.getString(R.string.toast_import_data_success), Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, resources.getString(R.string.toast_import_data_failure), Toast.LENGTH_SHORT).show()
             }
             inputStream?.close()
-            finish()
-        } else {
-            if (!manager.loadData(null, password)) {
-                Toast.makeText(this, R.string.toast_invalid_password, Toast.LENGTH_LONG).show()
-                return
+            val wasLegacy = manager.importedLegacyFormat
+            runOnUiThread {
+                setLoading(false)
+                when {
+                    success && wasLegacy -> {
+                        AlertDialog.Builder(this)
+                            .setTitle(R.string.alert_title_legacy_import)
+                            .setMessage(R.string.alert_message_legacy_import)
+                            .setPositiveButton(R.string.button_acknowledge) { _, _ -> finish() }
+                            .setOnDismissListener { finish() }
+                            .show()
+                    }
+                    success -> {
+                        Toast.makeText(this, R.string.toast_import_data_success, Toast.LENGTH_SHORT).show()
+                        finish()
+                    }
+                    else -> {
+                        Toast.makeText(this, R.string.toast_import_data_failure, Toast.LENGTH_SHORT).show()
+                        finish()
+                    }
+                }
             }
-            val intent = Intent(this, MainActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            startActivity(intent)
-        }
+        }.start()
+    }
+
+    private fun runLogin(password: String) {
+        Thread {
+            val success = manager.loadData(null, password)
+            if (success && manager.loadedFromLegacyStorage()) {
+                // Migrate legacy data to the current format and warm the key cache now, so
+                // subsequent edits don't run Argon2id on the UI thread.
+                manager.saveData()
+            }
+            runOnUiThread {
+                if (!success) {
+                    setLoading(false)
+                    Toast.makeText(this, R.string.toast_invalid_password, Toast.LENGTH_LONG).show()
+                    return@runOnUiThread
+                }
+                val intent = Intent(this, MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                startActivity(intent)
+            }
+        }.start()
+    }
+
+    private fun setLoading(loading: Boolean) {
+        btnLogin.isEnabled = !loading
+        ettpAppPassword.isEnabled = !loading
+        btnLogin.text = getString(if (loading) R.string.button_unlocking else R.string.button_confirm)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
