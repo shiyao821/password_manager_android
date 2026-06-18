@@ -197,6 +197,7 @@ object Manager {
     /** Current key derivation: Argon2id, matching the companion Python tooling. */
     private fun deriveKeyArgon2(inputPassword: String, saltBytes: ByteArray): String {
         val output = ByteArray(ARGON2_KEY_LENGTH)
+        val passwordBytes = inputPassword.toByteArray(Charsets.UTF_8)
         val params = Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
             .withVersion(Argon2Parameters.ARGON2_VERSION_13)
             .withIterations(ARGON2_ITERATIONS)
@@ -204,9 +205,15 @@ object Manager {
             .withParallelism(ARGON2_PARALLELISM)
             .withSalt(saltBytes)
             .build()
-        Argon2BytesGenerator().apply { init(params) }
-            .generateBytes(inputPassword.toByteArray(Charsets.UTF_8), output)
-        return getUrlEncoder().encodeToString(output)
+        try {
+            Argon2BytesGenerator().apply { init(params) }
+                .generateBytes(passwordBytes, output)
+            return getUrlEncoder().encodeToString(output)
+        } finally {
+            // Wipe the transient secret byte arrays so they don't linger on the heap.
+            passwordBytes.fill(0)
+            output.fill(0)
+        }
     }
 
     /** Returns a (cached) Fernet key for the given password/salt to avoid re-running Argon2id. */
