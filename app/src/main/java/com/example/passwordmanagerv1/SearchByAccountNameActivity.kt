@@ -28,6 +28,7 @@ class SearchByAccountNameActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_by)
+        CommonUIBehaviors.applySecureFlag(this)
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 

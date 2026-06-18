@@ -37,6 +37,7 @@ class EditLinkedAccountsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_linked_accounts)
+        CommonUIBehaviors.applySecureFlag(this)
 
         accountInContext = intent.getStringExtra(EXTRA_ACCOUNT_NAME)!!
         linkedAccounts = Manager.getLinkedAccounts(accountInContext)

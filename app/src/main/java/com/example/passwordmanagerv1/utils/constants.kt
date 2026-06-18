@@ -6,8 +6,6 @@ const val DATAFILE_NAME_AND_EXTENSION = DATAFILE_NAME + DATAFILE_EXTENSION
 const val DATAFILE_MIMETYPE_BINARY = "application/octet-stream"
 const val DATAFILE_MIMETYPE_PLAIN = "text/plain"
 
-const val DEBUG_PASSWORD = "debug"
-
 // According to https://owasp.org/www-community/password-special-characters
 const val VALID_SPECIAL_CHARS_WITHOUT_SPACE = "!\"#\$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
 const val VALID_SPECIAL_CHARS_WITH_SPACE = " !\"#\$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
@@ -52,7 +50,21 @@ const val EXTRA_VERIFICATION = "EXTRA_VERIFICATION"
 
 const val LABEL_COPY = "LABEL_COPY"
 
-const val KEY_ALGORITHM = "PBKDF2WithHmacSHA256"
-const val KEY_SALT = "69420"
-const val DERIVED_KEY_LENGTH = 256
-const val KEY_ITERATIONS = 69420
+// --- Current encryption scheme: Argon2id + Fernet ---
+// File format: [4-byte magic][32-byte random salt][Fernet ciphertext]
+val FILE_MAGIC = byteArrayOf('P'.code.toByte(), 'W'.code.toByte(), 'M'.code.toByte(), 0x01)
+const val SALT_LENGTH = 32
+const val ARGON2_KEY_LENGTH = 32
+const val ARGON2_ITERATIONS = 3
+const val ARGON2_MEMORY_KB = 65536
+const val ARGON2_PARALLELISM = 4
+
+// --- Legacy encryption scheme: PBKDF2 + Fernet (raw token, no header) ---
+// Retained only to decrypt/import data produced by older versions. Never used for new writes.
+const val LEGACY_KEY_ALGORITHM = "PBKDF2WithHmacSHA256"
+const val LEGACY_KEY_SALT = "69420"
+const val LEGACY_DERIVED_KEY_LENGTH = 256
+const val LEGACY_KEY_ITERATIONS = 69420
+
+// How long a copied secret stays on the clipboard before it is auto-cleared.
+const val CLIPBOARD_CLEAR_DELAY_MS = 60_000L

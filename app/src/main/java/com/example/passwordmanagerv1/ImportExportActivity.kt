@@ -40,6 +40,7 @@ class ImportExportActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_import_export)
+        CommonUIBehaviors.applySecureFlag(this)
 
         btnImportData = findViewById(R.id.btnImportData)
         btnExportData = findViewById(R.id.btnExportData)

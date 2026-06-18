@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        CommonUIBehaviors.applySecureFlag(this)
 
         val optionTextsMap = mapOf(
             OPTION_CODE_ADD_ACCOUNT to this.resources.getString(R.string.ADD_ACCOUNT),

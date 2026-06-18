@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
 import com.example.passwordmanagerv1.utils.CommonUIBehaviors
@@ -35,6 +36,7 @@ class SecurityActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_security)
+        CommonUIBehaviors.applySecureFlag(this)
 
         importingData = intent.getParcelableExtra(EXTRA_IMPORT_DATA_URI)
         isVerificationOnly = intent.getBooleanExtra(EXTRA_VERIFICATION, false) == true
@@ -112,16 +114,26 @@ class SecurityActivity : AppCompatActivity() {
         }
         if (importingData != null) {
             val inputStream = contentResolver.openInputStream(importingData!!)
-            if (manager.loadData(inputStream, password, false)) {
+            if (manager.loadData(inputStream, password)) {
+                manager.saveData() // persist merged data in the current encrypted format
+                if (manager.importedLegacyFormat) {
+                    inputStream?.close()
+                    AlertDialog.Builder(this)
+                        .setTitle(R.string.alert_title_legacy_import)
+                        .setMessage(R.string.alert_message_legacy_import)
+                        .setPositiveButton(R.string.button_acknowledge) { _, _ -> finish() }
+                        .setOnDismissListener { finish() }
+                        .show()
+                    return
+                }
                 Toast.makeText(this, resources.getString(R.string.toast_import_data_success), Toast.LENGTH_SHORT).show()
-                manager.saveData()
             } else {
                 Toast.makeText(this, resources.getString(R.string.toast_import_data_failure), Toast.LENGTH_SHORT).show()
             }
             inputStream?.close()
             finish()
         } else {
-            if (!manager.loadData(null, password, false)) {
+            if (!manager.loadData(null, password)) {
                 Toast.makeText(this, R.string.toast_invalid_password, Toast.LENGTH_LONG).show()
                 return
             }

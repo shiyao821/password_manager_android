@@ -25,6 +25,7 @@ class EditStringActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_string)
+        CommonUIBehaviors.applySecureFlag(this)
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         accountName = intent.getStringExtra(EXTRA_ACCOUNT_NAME)!!

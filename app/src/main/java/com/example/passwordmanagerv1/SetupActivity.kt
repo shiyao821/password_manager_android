@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.example.passwordmanagerv1.utils.CommonUIBehaviors
 
 class SetupActivity : AppCompatActivity() {
 
@@ -25,6 +26,7 @@ class SetupActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_setup)
+        CommonUIBehaviors.applySecureFlag(this)
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
@@ -64,12 +66,14 @@ class SetupActivity : AppCompatActivity() {
 
     private fun validatePasswordInputs() {
         val passwordInput = ettpAppPasswordSetup.text.toString()
-        val confirmPasswordInput = ettpAppPasswordSetup.text.toString()
+        val confirmPasswordInput = ettpAppPasswordSetupConfirmation.text.toString()
         if (!isValidPassword(passwordInput)) {
             Toast.makeText(this, R.string.toast_invalid_password, Toast.LENGTH_SHORT).show()
+            return
         }
         if (passwordInput != confirmPasswordInput) {
             Toast.makeText(this, R.string.toast_mismatching_password, Toast.LENGTH_SHORT).show()
+            return
         }
 
         if (Manager.createNewDataFile(passwordInput)) {
@@ -86,7 +90,7 @@ class SetupActivity : AppCompatActivity() {
     }
 
     private fun isValidPassword(password: String): Boolean {
+        // TODO: enforce password strength requirements (length / character classes).
         return true
-        TODO("add regex")
     }
 }

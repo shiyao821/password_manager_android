@@ -32,6 +32,7 @@ class AccountDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account_details)
+        CommonUIBehaviors.applySecureFlag(this)
         res = this.resources
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 

@@ -13,9 +13,12 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.bouncycastle.crypto.generators.Argon2BytesGenerator
+import org.bouncycastle.crypto.params.Argon2Parameters
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
+import java.security.SecureRandom
 import java.time.Duration
 import java.time.Instant
 import java.time.temporal.TemporalAmount
@@ -35,6 +38,21 @@ object Manager {
     private lateinit var masterPassword: String
     private lateinit var accountList: MutableList<Account>
 
+    // 32-byte random salt for the current (Argon2id) file format. Null until a file
+    // is created/loaded in the new format; a fresh salt is generated on the next save,
+    // which is how legacy (plaintext / PBKDF2) data transparently migrates forward.
+    private var salt: ByteArray? = null
+
+    // Derived Fernet key cache so the expensive Argon2id KDF is not re-run on every save.
+    private var cachedKey: Key? = null
+    private var cachedKeySalt: ByteArray? = null
+    private var cachedKeyPassword: String? = null
+
+    // Set by the last loadData() call when the source used the legacy key format, so the
+    // UI can alert the user that their imported data has been upgraded.
+    var importedLegacyFormat: Boolean = false
+        private set
+
     fun setApplicationContext(context: Context) {
         applicationContext = context
         applicationFilePath = applicationContext.filesDir
@@ -44,17 +62,24 @@ object Manager {
         Log.i(TAG, "New password set up")
         masterPassword = passwordInput
         datafile = File(applicationFilePath, DATAFILE_NAME_AND_EXTENSION)
-        val textdata = listOf(
-            masterPassword,
-            applicationContext.resources.getString(R.string.sampleAccountJson),
-            applicationContext.resources.getString(R.string.sampleAccountJson2),
-            applicationContext.resources.getString(R.string.sampleAccountJson3),
-            applicationContext.resources.getString(R.string.sampleAccountJson4),
-            applicationContext.resources.getString(R.string.sampleAccountJson5),
-            applicationContext.resources.getString(R.string.sampleAccountJson6),
-            ).joinToString("\n")
-        datafile.writeText(textdata)
-        return true
+        // New vault gets a fresh random salt and is written encrypted from the start.
+        salt = null
+        invalidateKeyCache()
+        if (!this::accountList.isInitialized) accountList = mutableListOf()
+        accountList.clear()
+        val sampleAccountJsons = listOf(
+            R.string.sampleAccountJson,
+            R.string.sampleAccountJson2,
+            R.string.sampleAccountJson3,
+            R.string.sampleAccountJson4,
+            R.string.sampleAccountJson5,
+            R.string.sampleAccountJson6,
+        )
+        for (resId in sampleAccountJsons) {
+            val account: Account = Json.decodeFromString(applicationContext.resources.getString(resId))
+            accountList.add(account)
+        }
+        return saveData()
     }
 
     fun checkDataFile(): Boolean {
@@ -63,30 +88,20 @@ object Manager {
         return datafile.exists()
     }
 
-    fun loadData(importData: InputStream? = null, inputPassword: String, debug: Boolean = false): Boolean {
+    fun loadData(importData: InputStream? = null, inputPassword: String): Boolean {
+        importedLegacyFormat = false
         try {
-            if (debug && importData == null) {
-                datafile.delete()
-                Log.i(TAG, "Old datafile deleted")
-                createNewDataFile(inputPassword)
-            }
             val lines: List<String> = if (importData != null) {
-                val dataAsString = importData.readBytes().decodeToString()
+                val bytes = importData.readBytes()
                 importData.close()
-                val decodedString = decryptData(dataAsString, inputPassword)
-                decodedString.split("\n")
+                decryptImportedData(bytes, inputPassword).split("\n")
             } else {
-                val lines = datafile.readLines()
-                if (debug) { Log.i(TAG, "Datafile first line: ${lines[0]}") }
-                if (inputPassword != lines[0]) {
-                    throw TokenValidationException("Password mismatch")
-                }
-                lines.subList(1, lines.size)
+                decodeLocalFile(datafile.readBytes(), inputPassword)
             }
 
-            Log.i(TAG, "num lines ${lines.size}")
+            Log.i(TAG, "Imported file num lines ${lines.size}")
             if (!this::accountList.isInitialized) accountList = mutableListOf()
-            Log.i(TAG, "Account List: ${accountList.size}")
+            Log.i(TAG, "Local account List: ${accountList.size}")
             var numAccountsUpdated = 0
             var numAccountsAdded = 0
             for (line in lines) {
@@ -118,35 +133,127 @@ object Manager {
         return true
     }
 
-    private fun decryptData(encryptedData: String, inputPassword: String): String {
-        val token = Token.fromString(encryptedData)
-        val encodedKey = deriveKey(inputPassword)
-        val fernetKey = Key(encodedKey)
-        val validator = object : StringValidator {
-            override fun getTimeToLive(): TemporalAmount {
-                return Duration.ofSeconds(Instant.MAX.epochSecond)
-            }
+    /**
+     * Decodes the local data file. Handles both the current encrypted format (magic header
+     * present) and the legacy plaintext format (master password on line 0, account JSON
+     * lines after). Legacy plaintext is migrated to the encrypted format on the next save.
+     */
+    private fun decodeLocalFile(bytes: ByteArray, inputPassword: String): List<String> {
+        if (hasMagicHeader(bytes)) {
+            return decryptNewFormat(bytes, inputPassword).split("\n")
         }
-        return token.validateAndDecrypt(fernetKey, validator)
+        // Legacy plaintext local file.
+        val legacyLines = bytes.decodeToString().split("\n")
+        if (legacyLines.isEmpty() || inputPassword != legacyLines[0]) {
+            throw TokenValidationException("Password mismatch")
+        }
+        salt = null // force a fresh salt + encrypted rewrite on next save
+        invalidateKeyCache()
+        return legacyLines.subList(1, legacyLines.size)
     }
 
-    private fun deriveKey(inputPassword: String): String? {
-        val salt = KEY_SALT.toByteArray()
-        val derivedKeyLength = DERIVED_KEY_LENGTH
-        val iterations = KEY_ITERATIONS
-        val spec = PBEKeySpec(inputPassword.toCharArray(), salt, iterations, derivedKeyLength)
-        val key = SecretKeyFactory.getInstance(KEY_ALGORITHM)
+    /**
+     * Decrypts an imported data file. Handles the current Argon2id format (magic header) and
+     * the legacy PBKDF2 Fernet format (raw token, no header). Importing legacy data sets
+     * [importedLegacyFormat] and clears the salt so the vault is re-saved in the new format.
+     */
+    private fun decryptImportedData(bytes: ByteArray, inputPassword: String): String {
+        if (hasMagicHeader(bytes)) {
+            return decryptNewFormat(bytes, inputPassword)
+        }
+        importedLegacyFormat = true
+        salt = null
+        invalidateKeyCache()
+        return decryptLegacy(bytes.decodeToString(), inputPassword)
+    }
+
+    private fun hasMagicHeader(bytes: ByteArray): Boolean {
+        if (bytes.size < FILE_MAGIC.size) return false
+        for (i in FILE_MAGIC.indices) if (bytes[i] != FILE_MAGIC[i]) return false
+        return true
+    }
+
+    private fun decryptNewFormat(bytes: ByteArray, inputPassword: String): String {
+        val fileSalt = bytes.copyOfRange(FILE_MAGIC.size, FILE_MAGIC.size + SALT_LENGTH)
+        val tokenString = bytes.copyOfRange(FILE_MAGIC.size + SALT_LENGTH, bytes.size)
+            .decodeToString()
+        val plain = Token.fromString(tokenString)
+            .validateAndDecrypt(argonKey(inputPassword, fileSalt), fernetValidator())
+        salt = fileSalt // reuse this salt for subsequent saves in the same session
+        return plain
+    }
+
+    private fun decryptLegacy(tokenString: String, inputPassword: String): String {
+        return Token.fromString(tokenString)
+            .validateAndDecrypt(Key(deriveKeyLegacy(inputPassword)), fernetValidator())
+    }
+
+    private fun fernetValidator() = object : StringValidator {
+        override fun getTimeToLive(): TemporalAmount {
+            return Duration.ofSeconds(Instant.MAX.epochSecond)
+        }
+    }
+
+    /** Current key derivation: Argon2id, matching the companion Python tooling. */
+    private fun deriveKeyArgon2(inputPassword: String, saltBytes: ByteArray): String {
+        val output = ByteArray(ARGON2_KEY_LENGTH)
+        val params = Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
+            .withVersion(Argon2Parameters.ARGON2_VERSION_13)
+            .withIterations(ARGON2_ITERATIONS)
+            .withMemoryAsKB(ARGON2_MEMORY_KB)
+            .withParallelism(ARGON2_PARALLELISM)
+            .withSalt(saltBytes)
+            .build()
+        Argon2BytesGenerator().apply { init(params) }
+            .generateBytes(inputPassword.toByteArray(Charsets.UTF_8), output)
+        return getUrlEncoder().encodeToString(output)
+    }
+
+    /** Returns a (cached) Fernet key for the given password/salt to avoid re-running Argon2id. */
+    private fun argonKey(inputPassword: String, saltBytes: ByteArray): Key {
+        val cached = cachedKey
+        if (cached != null && cachedKeyPassword == inputPassword &&
+            cachedKeySalt?.contentEquals(saltBytes) == true) {
+            return cached
+        }
+        val key = Key(deriveKeyArgon2(inputPassword, saltBytes))
+        cachedKey = key
+        cachedKeyPassword = inputPassword
+        cachedKeySalt = saltBytes
+        return key
+    }
+
+    private fun invalidateKeyCache() {
+        cachedKey = null
+        cachedKeySalt = null
+        cachedKeyPassword = null
+    }
+
+    /** Legacy key derivation: PBKDF2 with a fixed salt. Only used to read old data. */
+    private fun deriveKeyLegacy(inputPassword: String): String {
+        val spec = PBEKeySpec(
+            inputPassword.toCharArray(),
+            LEGACY_KEY_SALT.toByteArray(),
+            LEGACY_KEY_ITERATIONS,
+            LEGACY_DERIVED_KEY_LENGTH
+        )
+        val key = SecretKeyFactory.getInstance(LEGACY_KEY_ALGORITHM)
             .generateSecret(spec).encoded
         return getUrlEncoder().encodeToString(key)
     }
 
+    /** Serializes the in-memory accounts into the new encrypted file format. */
+    private fun encryptToNewFormat(): ByteArray {
+        val currentSalt = salt ?: ByteArray(SALT_LENGTH)
+            .also { SecureRandom().nextBytes(it); salt = it }
+        val plainData = accountList.joinToString("") { Json.encodeToString(it) + "\n" }
+        val token = Token.generate(argonKey(masterPassword, currentSalt), plainData).serialise()
+        return FILE_MAGIC + currentSalt + token.toByteArray(Charsets.US_ASCII)
+    }
+
     fun saveData(): Boolean {
         try {
-            var saveString = masterPassword + "\n"
-            for (account in accountList) {
-                saveString += Json.encodeToString(account) + "\n"
-                datafile.writeText(saveString)
-            }
+            datafile.writeBytes(encryptToNewFormat())
         } catch (err: Exception) {
             Log.e(TAG, err.message.toString())
             return false
@@ -155,25 +262,11 @@ object Manager {
         return true
     }
 
-    fun encryptData(plainData: String): String {
-        val key = deriveKey(masterPassword)
-        val fernetKey = Key(key)
-        val token = Token.generate(fernetKey, plainData)
-        return token.serialise() // the Base64url encoded token
-    }
-
-    fun exportData(outputStream: OutputStream) : Boolean{
+    fun exportData(outputStream: OutputStream): Boolean {
         try {
             saveData()
-            var saveString = ""
-            for (acc in accountList) {
-                saveString += Json.encodeToString(acc) + "\n"
-            }
-            val encryptedData = encryptData(saveString)
-            // write
-            outputStream.write(encryptedData.toByteArray())
+            outputStream.write(encryptToNewFormat())
             outputStream.close()
-
         } catch (err: Exception) {
             Log.e(TAG, err.message.toString())
             return false

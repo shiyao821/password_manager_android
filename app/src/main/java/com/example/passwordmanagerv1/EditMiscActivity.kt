@@ -29,6 +29,7 @@ class EditMiscActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_misc)
+        CommonUIBehaviors.applySecureFlag(this)
 
         accountName = intent.getStringExtra(EXTRA_ACCOUNT_NAME)!!
         miscTitle = intent.getStringExtra(EXTRA_MISC_FIELD_TITLE) ?: ""

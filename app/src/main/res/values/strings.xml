@@ -98,6 +98,8 @@
     <string name="alert_title_permission_denied">Permission(s) Denied</string>
     <string name="toast_import_data_success">Data successfully imported</string>
     <string name="toast_import_data_failure">Data import failed</string>
+    <string name="alert_title_legacy_import">Data upgraded</string>
+    <string name="alert_message_legacy_import">The imported file used an older encryption format. Your data was imported successfully and has been re-saved using the current, stronger encryption.</string>
     <string name="toast_export_data_success">Data exported successfully</string>
     <string name="toast_export_data_failure">Data export failed</string>
     <string name="prompt_password_enter">Enter Master Password</string>
