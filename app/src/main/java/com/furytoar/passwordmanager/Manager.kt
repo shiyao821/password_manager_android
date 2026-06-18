@@ -76,7 +76,16 @@ object Manager {
         return datafile.exists()
     }
 
-    fun loadData(importData: InputStream? = null, inputPassword: String): Boolean {
+    /**
+     * Decrypts and loads accounts. When [importData] is given, the decoded accounts are merged
+     * into the current set (keeping the most recently edited copy of each). Set [wipeExisting]
+     * to discard all current accounts first, so the imported file replaces them wholesale.
+     */
+    fun loadData(
+        importData: InputStream? = null,
+        inputPassword: String,
+        wipeExisting: Boolean = false
+    ): Boolean {
         importedLegacyFormat = false
         try {
             val lines: List<String> = if (importData != null) {
@@ -90,6 +99,8 @@ object Manager {
             Log.i(TAG, "Imported file num lines ${lines.size}")
             if (!this::accountList.isInitialized) accountList = mutableListOf()
             Log.i(TAG, "Local account List: ${accountList.size}")
+            // For a wholesale import, discard existing accounts now that decryption succeeded.
+            if (wipeExisting) accountList.clear()
             // Merge incoming accounts, keeping the most recently edited copy of each.
             val mergeResult = AccountMerger.merge(accountList, lines)
             Log.i(TAG, "num accounts added/updated: ${mergeResult.added}/${mergeResult.updated}")

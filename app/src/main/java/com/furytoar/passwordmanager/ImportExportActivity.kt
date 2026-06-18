@@ -29,6 +29,10 @@ class ImportExportActivity : AppCompatActivity() {
     private lateinit var binding: ActivityImportExportBinding
     private lateinit var btnImportData: Button
     private lateinit var btnExportData: Button
+    private lateinit var btnUpdateData: Button
+    // True when the pending operation should wipe existing data first (Import) rather than
+    // merge into it (Update). Set on button click, read when launching decryption.
+    private var wipeBeforeImport = false
     private lateinit var verificationLauncherForImport: ActivityResultLauncher<Intent>
     private lateinit var verificationLauncherForExport: ActivityResultLauncher<Intent>
     private lateinit var importDecryptionLauncher: ActivityResultLauncher<Intent>
@@ -43,14 +47,22 @@ class ImportExportActivity : AppCompatActivity() {
 
         btnImportData = binding.btnImportData
         btnExportData = binding.btnExportData
+        btnUpdateData = binding.btnUpdateData
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         btnImportData.setOnClickListener {
+            // Import: wipe existing data and replace it wholesale with the chosen file.
+            wipeBeforeImport = true
             verifyIdentityForImport()
         }
         btnExportData.setOnClickListener {
             verifyIdentityForExport()
+        }
+        btnUpdateData.setOnClickListener {
+            // Update: merge the chosen file into existing data (keep newest of each account).
+            wipeBeforeImport = false
+            verifyIdentityForImport()
         }
         verificationLauncherForImport = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -192,6 +204,7 @@ class ImportExportActivity : AppCompatActivity() {
     private fun launchSecurityActivityForDecryption(uri: Uri) {
         val intent = Intent(this, SecurityActivity::class.java)
         intent.putExtra(EXTRA_IMPORT_DATA_URI, uri)
+        intent.putExtra(EXTRA_WIPE_ON_IMPORT, wipeBeforeImport)
         importDecryptionLauncher.launch(intent)
     }
 

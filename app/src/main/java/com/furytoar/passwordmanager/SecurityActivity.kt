@@ -20,6 +20,7 @@ import com.furytoar.passwordmanager.databinding.ActivitySecurityBinding
 import com.furytoar.passwordmanager.utils.CommonUIBehaviors
 import com.furytoar.passwordmanager.utils.EXTRA_IMPORT_DATA_URI
 import com.furytoar.passwordmanager.utils.EXTRA_VERIFICATION
+import com.furytoar.passwordmanager.utils.EXTRA_WIPE_ON_IMPORT
 
 
 class SecurityActivity : AppCompatActivity() {
@@ -32,6 +33,7 @@ class SecurityActivity : AppCompatActivity() {
     private lateinit var biometricAuthenticatorCallback: BiometricPrompt.AuthenticationCallback
     private var importingData: Uri? = null
     private var isVerificationOnly = false
+    private var wipeOnImport = false
     private lateinit var setupLauncher: ActivityResultLauncher<Intent>
 
     companion object {
@@ -52,6 +54,7 @@ class SecurityActivity : AppCompatActivity() {
             IntentCompat.getParcelableExtra(intent, EXTRA_IMPORT_DATA_URI, Uri::class.java)
         } else null
         isVerificationOnly = launchedInternally && intent.getBooleanExtra(EXTRA_VERIFICATION, false)
+        wipeOnImport = launchedInternally && intent.getBooleanExtra(EXTRA_WIPE_ON_IMPORT, false)
         Log.i(TAG, "is $isVerificationOnly")
 
         btnLogin = binding.btnLogin
@@ -142,11 +145,16 @@ class SecurityActivity : AppCompatActivity() {
     }
 
     private fun runImport(password: String) {
+        // "Import" wipes existing data and replaces it wholesale; "Update" merges into it.
+        val successMessage =
+            if (wipeOnImport) R.string.toast_import_data_success else R.string.toast_update_data_success
+        val failureMessage =
+            if (wipeOnImport) R.string.toast_import_data_failure else R.string.toast_update_data_failure
         Thread {
             val inputStream = contentResolver.openInputStream(importingData!!)
-            val success = manager.loadData(inputStream, password)
+            val success = manager.loadData(inputStream, password, wipeExisting = wipeOnImport)
             if (success) {
-                manager.saveData() // persist merged data in the current encrypted format
+                manager.saveData() // persist the loaded data in the current encrypted format
             }
             inputStream?.close()
             val wasLegacy = manager.importedLegacyFormat
@@ -162,11 +170,11 @@ class SecurityActivity : AppCompatActivity() {
                             .show()
                     }
                     success -> {
-                        Toast.makeText(this, R.string.toast_import_data_success, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, successMessage, Toast.LENGTH_SHORT).show()
                         finish()
                     }
                     else -> {
-                        Toast.makeText(this, R.string.toast_import_data_failure, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, failureMessage, Toast.LENGTH_SHORT).show()
                         finish()
                     }
                 }
