@@ -11,6 +11,7 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,8 +37,14 @@ class AccountDetailsActivity : AppCompatActivity() {
         res = this.resources
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        val accountName = intent.getStringExtra(EXTRA_ACCOUNT_NAME)!!
-        account = Manager.getAccount(accountName)!!
+        val accountName = intent.getStringExtra(EXTRA_ACCOUNT_NAME)
+        val fetchedAccount = accountName?.let { Manager.getAccount(it) }
+        if (fetchedAccount == null) {
+            Toast.makeText(this, R.string.toast_account_not_found, Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
+        account = fetchedAccount
     }
 
     override fun onStart() {

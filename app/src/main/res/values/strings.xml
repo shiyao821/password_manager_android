@@ -64,6 +64,8 @@
     <string name="alert_title_account_already_linked">This account is already linked</string>
     <string name="button_done">DONE</string>
     <string name="toast_error">Something went wrong</string>
+    <string name="toast_account_not_found">Account not found</string>
+    <string name="toast_account_name_exists">The account name \'%1$s\' already exists</string>
     <string name="toast_account_unlink_success">Account successfully unlinked</string>
     <string name="option_add_new_link">Link to another account</string>
     <string name="hint_account_name">Enter account name here</string>

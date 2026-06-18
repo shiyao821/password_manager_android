@@ -158,8 +158,10 @@ class ImportExportActivity : AppCompatActivity() {
         val outputStream = contentResolver.openOutputStream(uri)
         if (outputStream == null) {
             Log.e(TAG, "Error in opening output stream")
+            Toast.makeText(this, resources.getString(R.string.toast_export_data_failure), Toast.LENGTH_SHORT).show()
+            return
         }
-        if (Manager.exportData(outputStream!!)) {
+        if (Manager.exportData(outputStream)) {
             Toast.makeText(this, resources.getString(R.string.toast_export_data_success), Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(this, resources.getString(R.string.toast_export_data_failure), Toast.LENGTH_SHORT).show()

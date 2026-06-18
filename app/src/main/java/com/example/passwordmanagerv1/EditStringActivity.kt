@@ -7,6 +7,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import com.example.passwordmanagerv1.utils.AccountFieldType
 import com.example.passwordmanagerv1.utils.CommonUIBehaviors
 import com.example.passwordmanagerv1.utils.EXTRA_ACCOUNT_NAME
@@ -67,14 +68,25 @@ class EditStringActivity : AppCompatActivity() {
     }
 
     private fun handleInputConfirmation() : Boolean {
-        saveNewValue()
-        this@EditStringActivity.finish()
+        if (saveNewValue()) {
+            this@EditStringActivity.finish()
+        }
         return true
     }
 
-    private fun saveNewValue() {
+    private fun saveNewValue(): Boolean {
         val newValue = etNewValue.text.toString()
-        Manager.editStringFieldValue(accountName, accountFieldTypeToEdit, newValue)
+        // Reject renaming an account onto an existing account name (would create a duplicate).
+        if (accountFieldTypeToEdit == AccountFieldType.accountName &&
+            newValue != accountName && Manager.ifAccountNameExists(newValue)) {
+            Toast.makeText(
+                this,
+                getString(R.string.toast_account_name_exists, newValue),
+                Toast.LENGTH_SHORT
+            ).show()
+            return false
+        }
+        return Manager.editStringFieldValue(accountName, accountFieldTypeToEdit, newValue)
     }
 
     override fun onResume() {

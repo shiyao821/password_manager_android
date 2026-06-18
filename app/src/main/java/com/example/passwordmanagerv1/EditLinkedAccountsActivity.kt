@@ -127,7 +127,7 @@ class EditLinkedAccountsActivity : AppCompatActivity() {
             return
         }
         addNewLinkClick()
-        adapter.notifyItemInserted(adapter.itemCount) // refresh RecyclerView
+        adapter.notifyItemInserted(adapter.itemCount - 1) // refresh RecyclerView at the new item's position
         Toast.makeText(this, resources.getString(R.string.toast_account_link_success), Toast.LENGTH_SHORT).show()
     }
 

@@ -119,7 +119,7 @@ object Manager {
                     accountList.add(newAccount)
                 }
             }
-            Log.i(TAG, "num accounts added/updated: $numAccountsUpdated")
+            Log.i(TAG, "num accounts added/updated: $numAccountsAdded/$numAccountsUpdated")
 
             masterPassword = inputPassword // set as new masterPassword only after successful decoding
 
@@ -323,7 +323,19 @@ object Manager {
     ) : Boolean {
         val account = getAccount(accountName) ?: return false
         when (accountFieldTypeToEdit) {
-            AccountFieldType.accountName -> account.accountName = newValue
+            AccountFieldType.accountName -> {
+                val oldName = account.accountName
+                account.accountName = newValue
+                // Keep linked-account references in other accounts pointing at the new name.
+                val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                for (other in accountList) {
+                    val idx = other.linkedAccounts.indexOf(oldName)
+                    if (idx >= 0) {
+                        other.linkedAccounts[idx] = newValue
+                        other.lastEdited = now
+                    }
+                }
+            }
             AccountFieldType.email -> account.email = newValue
             AccountFieldType.username -> account.username = newValue
             AccountFieldType.phone -> account.phone = newValue
@@ -340,7 +352,7 @@ object Manager {
         // validation
         if (accountNameToEdit == requestedAccountName) return false // cannot link to itself
         getAccount(requestedAccountName) ?: return false
-        val accountToEdit = getAccount(accountNameToEdit)!!
+        val accountToEdit = getAccount(accountNameToEdit) ?: return false
         if (requestedAccountName in accountToEdit.linkedAccounts) return false
         // edit
         accountToEdit.linkedAccounts.add(requestedAccountName)
@@ -349,13 +361,13 @@ object Manager {
     }
 
     fun getLinkedAccounts(accountInContext: String): List<String> {
-        return getAccount(accountInContext)!!.linkedAccounts
+        return getAccount(accountInContext)?.linkedAccounts ?: emptyList()
     }
 
     fun removeFromLinkedAccounts(accountNameToEdit: String, requestedAccountName: String) : Boolean {
         // validation
         getAccount(requestedAccountName) ?: return false
-        val accountToEdit = getAccount(accountNameToEdit)!!
+        val accountToEdit = getAccount(accountNameToEdit) ?: return false
         if (requestedAccountName !in accountToEdit.linkedAccounts) return false
         // edit
         accountToEdit.linkedAccounts.remove(requestedAccountName)
@@ -392,14 +404,13 @@ object Manager {
     }
 
     fun hasMiscTitle(accountName: String, title: String): Boolean {
-        val account = getAccount(accountName)
-        return account!!.misc.containsKey(title)
+        return getAccount(accountName)?.misc?.containsKey(title) ?: false
     }
 
     fun getAccountNamesFilteredByField(accountFieldType: AccountFieldType, value: String): List<String> {
         if (accountFieldType == AccountFieldType.misc) {
             Log.i(TAG, "Filter by Misc field not implemented")
-            return listOf("")
+            return emptyList()
         }
         if (accountFieldType == AccountFieldType.linkedAccounts) {
             return accountList.filter { account -> account.linkedAccounts.contains(value) }
@@ -435,7 +446,7 @@ object Manager {
         return accountList.map { it.linkedAccounts }.flatten().groupingBy { it }.eachCount()
     }
 
-    fun deleteAccount(accountName: String) {
+    fun deleteAccount(accountName: String): Boolean {
         accountList.remove(this.getAccount(accountName))
         // Remove all other accounts with reference to this account in Linked Accounts
         for (account in accountList) {
@@ -443,6 +454,7 @@ object Manager {
                 account.linkedAccounts.remove(accountName)
             }
         }
+        return saveData() // persist the deletion
     }
 
     fun verifyPassword(input: String): Boolean {
